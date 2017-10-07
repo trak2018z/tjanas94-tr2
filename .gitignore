@@ -1,0 +1,8 @@
+.python-version
+.vscode
+__pycache__
+*.py[cod]
+*.env
+*.log
+core
+backend/static

@@ -1,0 +1,11 @@
+django
+psycopg2
+djangorestframework
+django-filter
+drf-extensions
+django-extensions
+werkzeug
+bpython
+watchdog
+django-debug-toolbar
+ptvsd==3.0.0

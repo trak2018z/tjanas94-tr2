@@ -1,0 +1,31 @@
+version: '2.2'
+services:
+  python:
+    build:
+      context: .
+      dockerfile: docker/python/Dockerfile
+    image: python:biblioteka
+    ports:
+      - "${BACKEND_WEB_PORT:-8000}:8000"
+      - "${BACKEND_DEBUG_PORT:-3000}:3000"
+    volumes:
+      - ./backend:/usr/src/app
+      - static-volume:/usr/src/app/static
+    links:
+      - postgres
+    env_file: .env
+    environment:
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+
+  postgres:
+    image: postgres:10-alpine
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+     - db-volume:/var/lib/postgresql/data
+    env_file: .env
+
+volumes:
+  db-volume:
+  static-volume:

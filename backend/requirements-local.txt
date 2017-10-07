@@ -1,0 +1,4 @@
+django
+flake8
+flake8_docstrings
+yapf
