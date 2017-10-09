@@ -6,3 +6,6 @@ __pycache__
 *.log
 core
 backend/static
+node_modules
+dist
+.cache-loader

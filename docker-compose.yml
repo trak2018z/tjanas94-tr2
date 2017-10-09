@@ -26,6 +26,21 @@ services:
      - db-volume:/var/lib/postgresql/data
     env_file: .env
 
+  node:
+    build:
+      context: .
+      dockerfile: docker/node/Dockerfile
+    image: node:biblioteka
+    ports:
+      - "${FRONTEND_WEB_PORT:-9000}:9000"
+    volumes:
+      - ./frontend:/usr/src/app
+      - node-modules:/usr/src/app/node_modules
+    links:
+      - python
+    env_file: .env
+
 volumes:
   db-volume:
   static-volume:
+  node-modules:
