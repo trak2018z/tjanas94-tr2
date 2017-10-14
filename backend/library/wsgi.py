@@ -1,5 +1,5 @@
 """
-WSGI config for biblioteka project.
+WSGI config for library project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
@@ -12,7 +12,7 @@ import os
 from django.core.wsgi import get_wsgi_application
 from django.conf import settings
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "biblioteka.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "library.settings")
 
 if settings.ENABLE_PTVSD:
     import ptvsd

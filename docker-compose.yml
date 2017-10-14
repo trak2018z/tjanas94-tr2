@@ -4,7 +4,7 @@ services:
     build:
       context: .
       dockerfile: docker/python/Dockerfile
-    image: python:biblioteka
+    image: python:library
     ports:
       - "${BACKEND_WEB_PORT:-8000}:8000"
       - "${BACKEND_DEBUG_PORT:-3000}:3000"
@@ -30,7 +30,7 @@ services:
     build:
       context: .
       dockerfile: docker/node/Dockerfile
-    image: node:biblioteka
+    image: node:library
     ports:
       - "${FRONTEND_WEB_PORT:-9000}:9000"
     volumes:
