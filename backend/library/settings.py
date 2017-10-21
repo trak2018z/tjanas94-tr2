@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
-    'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_filters',
@@ -48,6 +47,8 @@ INSTALLED_APPS = [
     'django_extensions',
     'debug_toolbar',
     'djcelery_email',
+    'accounts',
+    'books',
 ]
 
 MIDDLEWARE = [
@@ -122,6 +123,8 @@ PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.BCryptSHA256PasswordHasher',
 ]
 
+AUTH_USER_MODEL = 'accounts.User'
+
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
 
@@ -175,6 +178,7 @@ CACHES = {
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 SESSION_CACHE_ALIAS = 'default'
+MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
 
 # Celery configuration
 
