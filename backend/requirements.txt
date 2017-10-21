@@ -1,11 +1,15 @@
-django
+django[bcrypt]
 psycopg2
+django-celery-email
+django-redis
+uwsgi
 djangorestframework
 django-filter
 drf-extensions
 django-extensions
-werkzeug
 bpython
+graphviz
+werkzeug
 watchdog
 django-debug-toolbar
 ptvsd==3.0.0

@@ -11,10 +11,10 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
+from kombu import Exchange, Queue
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
@@ -33,7 +33,6 @@ WERKZEUG_DEBUG_PIN = os.environ['WERKZEUG_DEBUG_PIN']
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -48,9 +47,11 @@ INSTALLED_APPS = [
     'rest_framework_extensions',
     'django_extensions',
     'debug_toolbar',
+    'djcelery_email',
 ]
 
 MIDDLEWARE = [
+    'django.middleware.cache.UpdateCacheMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -81,7 +82,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'library.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
@@ -96,25 +96,31 @@ DATABASES = {
     }
 }
 
-
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        'NAME':
+        'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'NAME':
+        'django.contrib.auth.password_validation.MinimumLengthValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        'NAME':
+        'django.contrib.auth.password_validation.CommonPasswordValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        'NAME':
+        'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
 
+PASSWORD_HASHERS = [
+    'django.contrib.auth.hashers.BCryptSHA256PasswordHasher',
+]
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
@@ -129,7 +135,6 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
@@ -137,21 +142,87 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 REST_FRAMEWORK = {
-    'DEFAULT_RENDERER_CLASSES': (
-        'rest_framework.renderers.JSONRenderer',
-    ),
-    'DEFAULT_PARSER_CLASSES': (
-        'rest_framework.parsers.JSONParser',
-    ),
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.SessionAuthentication',
-    ),
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
-    ],
+    'DEFAULT_RENDERER_CLASSES': ('rest_framework.renderers.JSONRenderer', ),
+    'DEFAULT_PARSER_CLASSES': ('rest_framework.parsers.JSONParser', ),
+    'DEFAULT_AUTHENTICATION_CLASSES':
+    ('rest_framework.authentication.SessionAuthentication', ),
+    'DEFAULT_PERMISSION_CLASSES':
+    ['rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'],
 }
 
 RUNSERVERPLUS_SERVER_ADDRESS_PORT = '0.0.0.0:8000'
 DEBUG_TOOLBAR_CONFIG = {
     'SHOW_TOOLBAR_CALLBACK': (lambda r: DEBUG),
 }
+
+REDIS_URL = 'redis://:{password}@{hostname}:{port}/{database}'.format(
+    password=os.environ['REDIS_PASSWORD'],
+    hostname=os.environ['REDIS_HOST'],
+    port=os.environ['REDIS_PORT'],
+    database=os.environ['REDIS_DB'], )
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': REDIS_URL,
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "SERIALIZER": "django_redis.serializers.json.JSONSerializer",
+        },
+        'KEY_PREFIX': os.environ['REDIS_PREFIX']
+    },
+}
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+SESSION_CACHE_ALIAS = 'default'
+
+# Celery configuration
+
+CELERY_BROKER_URL = 'amqp://{user}:{password}@{hostname}:{port}/{vhost}?heartbeat=30'.format(
+    user=os.environ['RABBITMQ_DEFAULT_USER'],
+    password=os.environ['RABBITMQ_DEFAULT_PASS'],
+    hostname=os.environ['RABBITMQ_HOST'],
+    port=os.environ['RABBITMQ_PORT'],
+    vhost=os.environ['RABBITMQ_DEFAULT_VHOST'], )
+
+CELERY_BROKER_POOL_LIMIT = 1
+CELERY_BROKER_CONNECTION_TIMEOUT = 10
+
+# configure queues, currently we have only one
+CELERY_DEFAULT_QUEUE = 'default'
+CELERY_QUEUES = (Queue('default', Exchange('default'),
+                       routing_key='default'), )
+
+# Sensible settings for celery
+CELERY_ALWAYS_EAGER = False
+CELERY_ACKS_LATE = True
+CELERY_TASK_PUBLISH_RETRY = True
+CELERY_DISABLE_RATE_LIMITS = False
+
+# By default we will ignore result
+# If you want to see results and try out tasks interactively, change it to False
+# Or change this setting on tasks level
+CELERY_IGNORE_RESULT = True
+CELERY_SEND_TASK_ERROR_EMAILS = False
+CELERY_TASK_RESULT_EXPIRES = 600
+
+# Set redis as celery result backend
+CELERY_RESULT_BACKEND = REDIS_URL
+CELERY_REDIS_MAX_CONNECTIONS = 1
+
+# Don't use pickle as serializer, json is much safer
+CELERY_TASK_SERIALIZER = "json"
+CELERY_ACCEPT_CONTENT = ['application/json']
+
+CELERYD_HIJACK_ROOT_LOGGER = False
+CELERYD_PREFETCH_MULTIPLIER = 1
+CELERYD_MAX_TASKS_PER_CHILD = 1000
+
+EMAIL_HOST = os.environ['EMAIL_HOST']
+EMAIL_PORT = os.environ['EMAIL_PORT']
+EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER']
+EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
+EMAIL_USE_TLS = os.environ['EMAIL_USE_TLS'] == 'true'
+EMAIL_USE_SSL = os.environ['EMAIL_USE_SSL'] == 'true'
+EMAIL_TIMEOUT = os.environ['EMAIL_TIMEOUT']
+EMAIL_BACKEND = 'djcelery_email.backends.CeleryEmailBackend'

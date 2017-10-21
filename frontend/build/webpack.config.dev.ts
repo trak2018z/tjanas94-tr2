@@ -50,7 +50,9 @@ const config: webpack.Configuration = {
       poll: 1000,
     },
     proxy: {
-      "/api": "http://python:8000",
+      "/api": "http://backend:8000",
+      "/admin": "http://backend:8000",
+      "/static": "http://backend:8000",
     },
   },
   module: {

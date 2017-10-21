@@ -1,4 +1,4 @@
-django
+django[bcrypt]
 flake8
 flake8_docstrings
 yapf

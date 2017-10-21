@@ -1,5 +1,9 @@
 #!/bin/bash
 
+
+# Wait for postgres
+sleep 10
+
 # Collect static files
 echo "Collect static files"
 python manage.py collectstatic --noinput
