@@ -8,7 +8,7 @@ django-filter
 drf-extensions
 django-extensions
 bpython
-graphviz
+pygraphviz
 werkzeug
 watchdog
 django-debug-toolbar

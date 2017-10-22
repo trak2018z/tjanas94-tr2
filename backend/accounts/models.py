@@ -71,9 +71,7 @@ class User(AbstractBaseUser):
         verbose_name='grupa',
         null=True,
         blank=True,
-        help_text='Grupa do której należy użytkownik.',
-        related_name="user_set",
-        related_query_name="user", )
+        help_text='Grupa do której należy użytkownik.', )
     date_joined = models.DateTimeField(_('date joined'), default=timezone.now)
     last_password_change = models.DateTimeField(
         'data ostatniej zmiany hasła',
@@ -167,7 +165,7 @@ class User(AbstractBaseUser):
         return _user_has_module_perms(self, app_label)
 
 
-class Password(models.Model):
+class PasswordHistory(models.Model):
     password = models.CharField('hasło', max_length=128)
-    user = models.ForeignKey(
-        User, related_name='password_set', verbose_name='użytkownik')
+    created = models.DateTimeField('utworzone', default=timezone.now)
+    user = models.ForeignKey(User, verbose_name='użytkownik')
