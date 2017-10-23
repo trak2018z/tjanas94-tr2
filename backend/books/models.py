@@ -20,8 +20,8 @@ class Book(models.Model):
         'wydawnictwo', max_length=100, blank=True, null=True)
 
     count = models.PositiveSmallIntegerField('ilość', default=0)
-    created = models.DateField('utworzone', default=timezone.now)
-    modified = models.DateField('utworzone', default=timezone.now)
+    created = models.DateTimeField('utworzone', default=timezone.now)
+    modified = models.DateTimeField('utworzone', default=timezone.now)
 
     description = models.TextField('opis', blank=True, null=True)
     file_name = models.CharField(
@@ -51,4 +51,4 @@ class LendingHistory(models.Model):
     status = models.PositiveSmallIntegerField('status', choices=STATUSES)
     user = models.ForeignKey(User, verbose_name='użytkownik')
     lending = models.ForeignKey(Lending, verbose_name='wypożyczenie')
-    created = models.DateField('utworzone', default=timezone.now)
+    created = models.DateTimeField('utworzone', default=timezone.now)

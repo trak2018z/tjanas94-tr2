@@ -75,7 +75,8 @@ class UserAdmin(BaseUserAdmin):
             'fields': ('is_active', 'is_superuser', 'group')
         }),
         (_('Important dates'), {
-            'fields': ('last_login', 'date_joined', 'last_password_change')
+            'fields': ('last_login', 'date_joined', 'last_password_change',
+                       'activation_date')
         }), )
     # add_fieldsets is not a standard ModelAdmin attribute. UserAdmin
     # overrides get_fieldsets to use this attribute when creating a user.

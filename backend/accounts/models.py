@@ -27,7 +27,7 @@ class UserManager(BaseUserManager):
             email=email,
             is_active=True,
             is_superuser=is_superuser,
-            date_joined=now,
+            activation_date=now,
             **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
@@ -78,6 +78,8 @@ class User(AbstractBaseUser):
         default=timezone.now,
         null=True,
         blank=True)
+    activation_date = models.DateTimeField(
+        'data aktywacji', null=True, blank=True)
 
     objects = UserManager()
 
