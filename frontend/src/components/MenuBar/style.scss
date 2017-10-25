@@ -1,0 +1,11 @@
+@import "~styles/config";
+
+.transparent {
+  background: $blue-dark;
+}
+
+.darkBackground {
+  a:hover {
+    background-color: $blue;
+  }
+}

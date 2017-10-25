@@ -89,16 +89,16 @@ const config: webpack.Configuration = {
           },
           "resolve-url-loader",
           {
-            loader: "sass-loader",
-            options: {
-              sourceMap: true,
-            },
-          },
-          {
             loader: "postcss-loader",
             options: {
               sourceMap: true,
               plugins: [autoprefixer],
+            },
+          },
+          {
+            loader: "sass-loader",
+            options: {
+              sourceMap: true,
             },
           },
         ],
