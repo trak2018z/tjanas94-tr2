@@ -14,12 +14,20 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 from django.conf.urls import url, include
+from django.contrib.auth.decorators import login_required
 from django.contrib import admin
 from django.conf import settings
 
+from accounts.views import profile_view, login_view, logout_view
+
+admin.autodiscover()
+admin.site.login = login_required(admin.site.login)
+
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    url(r'^api/accounts/profile', profile_view),
+    url(r'^api/accounts/login', login_view),
+    url(r'^api/accounts/logout', logout_view),
 ]
 
 if settings.DEBUG:

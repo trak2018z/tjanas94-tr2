@@ -1,9 +1,12 @@
 import React, { Component } from "react"
 import DevTools from "mobx-react-devtools"
+import { observer } from "mobx-react"
 
+import config from "config"
 import MenuBar from "components/MenuBar/MenuBar"
 import Landing from "routes/landing/Landing"
 
+@observer
 export default class App extends Component<{}, {}> {
   public render() {
     return (
@@ -20,13 +23,13 @@ export default class App extends Component<{}, {}> {
             <div className="container">
               <ul>
                 <li>
-                  <a>Wykonanie: Tomasz Janas &copy; 2017</a>
+                  <a href="#">Wykonanie: Tomasz Janas &copy; 2017</a>
                 </li>
               </ul>
             </div>
           </div>
         </div>
-        <DevTools />
+        {config.debug && <DevTools />}
       </section>
     )
   }

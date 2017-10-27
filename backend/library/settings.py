@@ -31,7 +31,7 @@ PTVSD_SECRET = os.environ['PTVSD_SECRET']
 
 WERKZEUG_DEBUG_PIN = os.environ['WERKZEUG_DEBUG_PIN']
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -62,6 +62,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+CSRF_USE_SESSIONS = False
 
 ROOT_URLCONF = 'library.urls'
 
@@ -124,6 +126,8 @@ PASSWORD_HASHERS = [
 ]
 
 AUTH_USER_MODEL = 'accounts.User'
+
+LOGIN_URL = '/'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/

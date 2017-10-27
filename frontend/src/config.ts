@@ -1,4 +1,5 @@
 export default {
-  apiUrl: 'http://localhost:9000/api',
-  debug: true
+  apiUrl: "/api/",
+  debug: process.env.NODE_ENV !== "production",
+  adminEmail: "t.janas94@gmail.com",
 }

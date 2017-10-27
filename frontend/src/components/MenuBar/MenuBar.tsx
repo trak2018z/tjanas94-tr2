@@ -1,9 +1,14 @@
 import React from "react"
+import { observer, inject } from "mobx-react"
 
 import styles from "./style"
 
-const MenuBar = () => (
-  <nav className={`navbar ${styles.transparent} ${styles.darkBackground}`}>
+interface IMenuBarProps {
+  userStore?: IUserStore
+}
+
+const MenuBar = ({ userStore }: IMenuBarProps) => (
+  <nav className={`navbar ${styles.darkBackground}`}>
     <div className="container">
       <div className="navbar-brand">
         <a className="navbar-item is-size-4" href="/">
@@ -14,30 +19,34 @@ const MenuBar = () => (
         <div className="navbar-end">
           <a className="navbar-item">Ksiązki</a>
           <a className="navbar-item">Wypożyczenia</a>
-          <a className="navbar-item" href="/admin">
-            <i className="icon fa fa-cog" />
-            Panel admina
-          </a>
-          <a className="navbar-item">
-            <i className="icon fa fa-user" />
-            Zarejestruj się
-          </a>
-          <a className="navbar-item">
-            <i className="icon fa fa-sign-in" />
-            Zaloguj się
-          </a>
-          <a className="navbar-item">
-            <i className="icon fa fa-user" />
-            Tomasz Janas
-          </a>
-          <a className="navbar-item">
-            <i className="icon fa fa-sign-out" />
-            Wyloguj
-          </a>
+          {userStore!.user.admin && (
+            <a className="navbar-item" href="/admin">
+              <i className="icon fa fa-cog" />
+              Panel admina
+            </a>
+          )}
+          {userStore!.user.authenticated && (
+            <a className="navbar-item">
+              <i className="icon fa fa-user" />
+              {userStore!.user.firstname} {userStore!.user.lastname}
+            </a>
+          )}
+          {userStore!.user.authenticated && (
+            <a className="navbar-item" onClick={userStore!.logout.bind(userStore)}>
+              <i className="icon fa fa-sign-out" />
+              Wyloguj
+            </a>
+          )}
+          {!userStore!.user.authenticated && (
+            <a className="navbar-item">
+              <i className="icon fa fa-sign-in" />
+              Zaloguj się
+            </a>
+          )}
         </div>
       </div>
     </div>
   </nav>
 )
 
-export default MenuBar
+export default inject("userStore")(observer(MenuBar))

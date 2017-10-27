@@ -160,8 +160,8 @@ const config: webpack.Configuration = {
     }),
     new AddAssetHtmlWebpackPlugin([
       {
-        filepath: path.resolve("dist/assets/vendor.*.js"),
-        outputPath: path.resolve("dist/assets"),
+        filepath: "dist/assets/vendor.*.js",
+        outputPath: "assets",
         publicPath: "assets",
       },
     ]),
@@ -176,6 +176,11 @@ const config: webpack.Configuration = {
       manifest: vendorManifest,
     }),
     new ForkTsCheckerWebpackPlugin({ checkSyntacticErrors: true }),
+    new webpack.DefinePlugin({
+      'process.env': {
+        'NODE_ENV': '"development"'
+      }
+    })
   ],
 }
 
