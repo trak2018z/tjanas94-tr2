@@ -36,6 +36,7 @@ const config: webpack.Configuration = {
     port: 9000,
     historyApiFallback: true,
     hot: true,
+    disableHostCheck: true,
     stats: {
       assets: false,
       children: false,
