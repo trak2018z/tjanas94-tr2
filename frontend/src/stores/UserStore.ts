@@ -1,44 +1,51 @@
 import ChildStore from "stores/ChildStore"
 import LoginForm from "stores/LoginForm"
+import RegisterForm from "stores/RegisterForm"
 import { toJS, action, observable } from "mobx"
 import request from "utils/request"
 import logger from "utils/logger"
+import history from "utils/history"
 
 export default class UserStore extends ChildStore<IRootStore>
   implements IUserStore {
-  public loginForm: ILoginForm
+  public loginForm: ILoginForm = new LoginForm(this.rootStore, this)
+  public registerForm: IRegisterForm = new RegisterForm(this.rootStore, this)
   @observable public user: IUser
 
   constructor(rootStore: IRootStore, parentStore: IRootStore) {
     super(rootStore, parentStore)
-    this.loginForm = new LoginForm(this.rootStore, this)
     this.loadUser()
   }
 
   public hasPermision(perm: string | string[]) {
+    if (this.user.admin) {
+      return true
+    }
     if (perm instanceof Array) {
       return perm.some(p => this.user.permissions.includes(p))
     }
     return this.user.permissions.includes(perm)
   }
 
-  public async login(data: ILoginRequest) {
+  public login = async (data: ILoginRequest) => {
     try {
       const response = await request.post("accounts/login", data)
-      this.setUser(this.getLoggedUser(response!.data.user))
+      this.setUser(this.getLoggedUser(response.data.user))
       this.cacheUser()
     } catch (err) {
-      if (err.response.status === 401) {
+      if (err.response && err.response.status === 401) {
         throw new Error(err.response.data.detail)
       }
       logger.error(err)
+      throw new Error('Napotkano błąd. Spróbuj ponownie.')
     }
   }
 
-  public async logout() {
+  public logout = async () => {
     try {
       this.setUser(this.getDefaultUser())
       this.cacheUser()
+      history.push("/")
       await request.post("accounts/logout")
     } catch (err) {
       logger.error(err)
@@ -48,13 +55,13 @@ export default class UserStore extends ChildStore<IRootStore>
   private async fetchUserProfile() {
     try {
       const response = await request.get("accounts/profile")
-      this.setUser(this.getLoggedUser(response!.data.user))
-    } catch (err) {
-      if (err.response.status === 401) {
-        this.setUser(this.getDefaultUser())
+      if (response.data.user) {
+        this.setUser(this.getLoggedUser(response.data.user))
       } else {
-        logger.error(err)
+        this.setUser(this.getDefaultUser())
       }
+    } catch (err) {
+      logger.error(err)
     }
   }
 

@@ -177,10 +177,12 @@ const config: webpack.Configuration = {
     }),
     new ForkTsCheckerWebpackPlugin({ checkSyntacticErrors: true }),
     new webpack.DefinePlugin({
-      'process.env': {
-        'NODE_ENV': '"development"'
-      }
-    })
+      "process.env": {
+        NODE_ENV: '"development"',
+        ADMIN_EMAIL: JSON.stringify(process.env.FRONTEND_ADMIN_EMAIL),
+        RECAPTCHA_SITE_KEY: JSON.stringify(process.env.RECAPTCHA_SITE_KEY),
+      },
+    }),
   ],
 }
 

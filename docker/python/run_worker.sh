@@ -5,4 +5,4 @@
 sleep 10
 
 # Start worker
-celery worker -A library.celery -Q default
+celery worker -A library.celery -l info

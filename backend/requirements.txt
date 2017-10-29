@@ -6,6 +6,7 @@ uwsgi
 djangorestframework
 django-filter
 drf-extensions
+django-ipware
 django-extensions
 bpython
 pygraphviz

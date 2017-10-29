@@ -34,6 +34,12 @@ class Lending(models.Model):
     last_change = models.ForeignKey(
         'LendingHistory', verbose_name='ostatnia zmiana', related_name='+')
 
+    class Meta:
+        permissions = (
+            ('view_own_lendings', 'Can view own lendings'),
+            ('view_all_lendings', 'Can view all lendings'),
+        )
+
 
 class LendingHistory(models.Model):
     RESERVED = 1

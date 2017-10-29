@@ -1,9 +1,7 @@
 import React from "react"
 import { observer } from "mobx-react"
 
-import Login from "routes/login/Login"
-
-const Landing = () => (
+const Landing = (Form: any) => observer(() => (
   <div className="container">
     <div className="columns">
       <div className="column is-6 is-vcentered has-text-centered">
@@ -13,10 +11,10 @@ const Landing = () => (
         </h2>
       </div>
       <div className="column is-5 is-offset-1">
-        <Login />
+        <Form />
       </div>
     </div>
   </div>
-)
+))
 
-export default observer(Landing)
+export default Landing

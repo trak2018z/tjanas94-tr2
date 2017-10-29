@@ -1,4 +1,5 @@
 import React from "react"
+import { Link } from "react-router-dom"
 import { observer, inject } from "mobx-react"
 
 import styles from "./style"
@@ -11,14 +12,22 @@ const MenuBar = ({ userStore }: IMenuBarProps) => (
   <nav className={`navbar ${styles.darkBackground}`}>
     <div className="container">
       <div className="navbar-brand">
-        <a className="navbar-item is-size-4" href="/">
+        <Link to="/" className="navbar-item is-size-4" href="/">
           Biblioteka
-        </a>
+        </Link>
       </div>
       <div id="navbarMenu" className="navbar-menu">
         <div className="navbar-end">
-          <a className="navbar-item">Ksiązki</a>
-          <a className="navbar-item">Wypożyczenia</a>
+          <Link to="/books" className="navbar-item">
+            Książki
+          </Link>
+          {userStore!.hasPermision(
+            ["books.view_own_lendings", "books.view_all_lendings"]
+          ) && (
+            <Link to="/lendings" className="navbar-item">
+              Wypożyczenia
+            </Link>
+          )}
           {userStore!.user.admin && (
             <a className="navbar-item" href="/admin">
               <i className="icon fa fa-cog" />
@@ -26,22 +35,22 @@ const MenuBar = ({ userStore }: IMenuBarProps) => (
             </a>
           )}
           {userStore!.user.authenticated && (
-            <a className="navbar-item">
+            <Link to="/profile" className="navbar-item">
               <i className="icon fa fa-user" />
               {userStore!.user.firstname} {userStore!.user.lastname}
-            </a>
+            </Link>
           )}
           {userStore!.user.authenticated && (
-            <a className="navbar-item" onClick={userStore!.logout.bind(userStore)}>
+            <a className="navbar-item" onClick={userStore!.logout}>
               <i className="icon fa fa-sign-out" />
               Wyloguj
             </a>
           )}
           {!userStore!.user.authenticated && (
-            <a className="navbar-item">
+            <Link to="/login" className="navbar-item">
               <i className="icon fa fa-sign-in" />
               Zaloguj się
-            </a>
+            </Link>
           )}
         </div>
       </div>

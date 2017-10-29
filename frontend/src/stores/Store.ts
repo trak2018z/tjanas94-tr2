@@ -4,7 +4,7 @@ export default abstract class Store implements IStore {
     return Object.keys(this)
       .filter(
         key =>
-          anyThis[key].getChildStores != null &&
+          anyThis[key] && anyThis[key].getChildStores != null &&
           !["rootStore", "parentStore"].includes(key)
       )
       .reduce(

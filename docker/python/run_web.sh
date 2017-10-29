@@ -4,15 +4,15 @@
 # Wait for postgres
 sleep 10
 
-# Collect static files
 echo "Collect static files"
 python manage.py collectstatic --noinput
 
-# Apply database migrations
+echo "Update permissions"
+python manage.py update_permissions
+
 echo "Apply database migrations"
 python manage.py migrate
 
-# Start server
 if [ "$ENABLE_PTVSD" == "true" ]; then
   echo "Starting server with remote debugger"
   python manage.py runserver_plus --noreload --nothreading

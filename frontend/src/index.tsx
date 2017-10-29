@@ -7,6 +7,7 @@ import { AppContainer } from "react-hot-loader"
 import RedBox from "redbox-react"
 
 import "styles"
+import "utils/recaptcha"
 import App from "components/App"
 import stores from "stores"
 
@@ -18,7 +19,7 @@ function renderApp() {
     render(
       <AppContainer>
         <Provider {...stores}>
-          <App />
+            <App />
         </Provider>
       </AppContainer>,
       appElement

@@ -227,10 +227,12 @@ CELERYD_PREFETCH_MULTIPLIER = 1
 CELERYD_MAX_TASKS_PER_CHILD = 1000
 
 EMAIL_HOST = os.environ['EMAIL_HOST']
-EMAIL_PORT = os.environ['EMAIL_PORT']
+EMAIL_PORT = int(os.environ['EMAIL_PORT'])
 EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER']
 EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
 EMAIL_USE_TLS = os.environ['EMAIL_USE_TLS'] == 'true'
 EMAIL_USE_SSL = os.environ['EMAIL_USE_SSL'] == 'true'
-EMAIL_TIMEOUT = os.environ['EMAIL_TIMEOUT']
+EMAIL_TIMEOUT = int(os.environ['EMAIL_TIMEOUT'])
 EMAIL_BACKEND = 'djcelery_email.backends.CeleryEmailBackend'
+
+RECAPTCHA_SECRET_KEY = os.environ['RECAPTCHA_SECRET_KEY']

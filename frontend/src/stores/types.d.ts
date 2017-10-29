@@ -20,6 +20,7 @@ interface IForm<T extends IStore, U> extends IChildStore<T> {
 
 interface IRootStore extends IStore {
   userStore: IUserStore
+  messageStore: IMessageStore
   getStoreMap(): any
 }
 
@@ -28,9 +29,16 @@ interface IMessage {
   visible: boolean
 }
 
+interface IMessageStore extends IChildStore<IRootStore> {
+  message: IMessage
+  showMessage(message: string, seconds?: number): void
+  hideMessage(): void
+}
+
 
 interface IUserStore extends IChildStore<IRootStore> {
   loginForm: ILoginForm
+  registerForm: IRegisterForm
   user: IUser
 
   hasPermision(perm: string | string[]): boolean
@@ -56,3 +64,26 @@ interface IUser extends ILoginResponse {
 }
 
 type ILoginForm = IForm<IUserStore, ILoginRequest>
+
+interface IRegisterRequest {
+  email: string
+  firstname: string
+  lastname: string
+  password: string
+  captcha: string
+}
+
+interface IRegisterData extends IRegisterRequest {
+  confirmPassword: string
+}
+
+interface IRegisterValidation {
+  password?: string
+  confirmPassword?: string
+}
+
+interface IRegisterForm extends IForm<IUserStore, IRegisterData> {
+  captchaId?: number
+  validation: IRegisterValidation
+  validatePassword(): void
+}

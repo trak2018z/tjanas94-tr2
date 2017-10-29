@@ -1,5 +1,6 @@
 export default {
   apiUrl: "/api/",
   debug: process.env.NODE_ENV !== "production",
-  adminEmail: "t.janas94@gmail.com",
+  adminEmail: process.env.ADMIN_EMAIL!,
+  recaptchaSiteKey: process.env.RECAPTCHA_SITE_KEY!,
 }

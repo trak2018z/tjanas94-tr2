@@ -18,7 +18,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import admin
 from django.conf import settings
 
-from accounts.views import profile_view, login_view, logout_view
+from accounts.views import profile_view, login_view, logout_view, register_view, activate_view
 
 admin.autodiscover()
 admin.site.login = login_required(admin.site.login)
@@ -28,6 +28,8 @@ urlpatterns = [
     url(r'^api/accounts/profile', profile_view),
     url(r'^api/accounts/login', login_view),
     url(r'^api/accounts/logout', logout_view),
+    url(r'^api/accounts/register', register_view),
+    url(r'^api/accounts/activate/(?P<token>\w+)', activate_view),
 ]
 
 if settings.DEBUG:

@@ -1,13 +1,14 @@
 import Form from "stores/Form"
 import { toJS, action, runInAction } from "mobx"
+import history from "utils/history"
 
 export default class LoginForm extends Form<IUserStore, ILoginRequest>
   implements ILoginForm {
-  @action.bound
   public async sendRequest() {
     try {
       runInAction(() => (this.pending = true))
       await this.parentStore.login(toJS(this.data))
+      history.push("/")
       this.clear()
     } catch (err) {
       runInAction(

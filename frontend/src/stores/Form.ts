@@ -9,7 +9,6 @@ export default abstract class Form<T extends IStore, U> extends ChildStore<T>
 
   constructor(rootStore: IRootStore, parentStore: T) {
     super(rootStore, parentStore)
-    this.submit = this.submit.bind(this)
     this.clear()
   }
 
@@ -17,7 +16,7 @@ export default abstract class Form<T extends IStore, U> extends ChildStore<T>
     return action((event: any) => this.data[field] = event.target.value)
   }
 
-  public submit(event: any) {
+  public submit = (event: any) => {
     event.preventDefault()
     this.sendRequest()
   }
