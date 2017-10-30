@@ -13,7 +13,7 @@ RUN yarn
 COPY frontend .
 RUN yarn prod
 
-FROM nginx:1.13-alpine
+FROM nginx:1.13
 COPY --from=build /usr/src/app/dist/prod /usr/src/app
 COPY docker/nginx/default.conf /etc/nginx/conf.d
 EXPOSE 80 443
