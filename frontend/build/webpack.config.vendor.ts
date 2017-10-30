@@ -1,36 +1,27 @@
 import * as path from "path"
 import * as webpack from "webpack"
+import config from "./config"
+
 const CleanWebpackPlugin = require("clean-webpack-plugin")
 
-const config: webpack.Configuration = {
-  devtool: "cheap-module-source-map",
-  entry: [
-    "react",
-    "react-dom",
-    "react-router",
-    "redbox-react",
-    "mobx",
-    "mobx-react",
-    "mobx-react-devtools",
-    "classnames",
-    "axios",
-    "js-logger",
-  ],
+const vendorConf: webpack.Configuration = {
+  devtool: config.sourceMapDev as any,
+  entry: config.libraries,
   output: {
-    path: path.resolve("dist"),
-    filename: "assets/vendor.[hash].js",
+    path: path.resolve(config.outputDev),
+    filename: config.assets + "/vendor.[chunkhash].js",
     library: "vendor_lib",
   },
   plugins: [
-    new CleanWebpackPlugin(["dist/assets/vendor.*"], {
+    new CleanWebpackPlugin([`${config.outputDev}/${config.assets}/vendor[.-]*`], {
       root: path.resolve("."),
     }),
     new webpack.DllPlugin({
       context: path.resolve("."),
-      path: "dist/assets/vendor-manifest.json",
+      path: `${config.outputDev}/${config.assets}/vendor-manifest.json`,
       name: "vendor_lib",
     }),
   ],
 }
 
-export default config
+export default vendorConf

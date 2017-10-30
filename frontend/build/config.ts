@@ -1,0 +1,20 @@
+export default {
+  outputDev: "dist/dev",
+  sourceMapDev: "cheap-module-source-map",
+  outputProd: "dist/prod",
+  sourceMapProd: "source-map",
+  assets: "assets",
+  libraries: [
+    "react",
+    "react-dom",
+    "react-router",
+    "redbox-react",
+    "mobx",
+    "mobx-react",
+    "mobx-react-devtools",
+    "classnames",
+    "axios",
+    "js-cookie",
+    "js-logger",
+  ],
+}

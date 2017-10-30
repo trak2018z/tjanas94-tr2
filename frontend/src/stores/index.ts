@@ -1,5 +1,9 @@
 import RootStore from "stores/RootStore"
+import config from "config"
 
-const store = (window.store = new RootStore().getStoreMap())
+const store = new RootStore().getStoreMap()
+if (config.debug) {
+  window.store = store
+}
 
 export default store

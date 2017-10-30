@@ -8,6 +8,8 @@ import RedBox from "redbox-react"
 
 import "styles"
 import "utils/recaptcha"
+import logger from "utils/logger"
+import config from "config"
 import App from "components/App"
 import stores from "stores"
 
@@ -25,7 +27,10 @@ function renderApp() {
       appElement
     )
   } catch (err) {
-    render(<RedBox error={err} />, appElement)
+    logger.error(err)
+    if (config.debug) {
+      render(<RedBox error={err} />, appElement)
+    }
   }
 }
 
