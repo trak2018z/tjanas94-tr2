@@ -13,7 +13,9 @@ python manage.py update_permissions
 echo "Apply database migrations"
 python manage.py migrate
 
-if [ "$ENABLE_PTVSD" == "true" ]; then
+if [ "$PROD" == "true" ]; then
+  uwsgi --ini /etc/uwsgi.ini
+elif [ "$ENABLE_PTVSD" == "true" ]; then
   echo "Starting server with remote debugger"
   python manage.py runserver_plus --noreload --nothreading
 else
