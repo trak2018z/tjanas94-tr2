@@ -14,7 +14,14 @@ COPY frontend .
 RUN yarn prod
 
 FROM nginx:1.13
+LABEL maintainer="Tomasz Janas"
+
+ARG FRONTEND_SSL_PORT
+ENV FRONTEND_SSL_PORT="$FRONTEND_SSL_PORT"
+
 COPY --from=build /usr/src/app/dist/prod /usr/src/app
-COPY docker/nginx/default.conf /etc/nginx/conf.d
+COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf.template
+RUN envsubst '$FRONTEND_SSL_PORT' < /etc/nginx/conf.d/default.conf.template > /etc/nginx/conf.d/default.conf
+
 EXPOSE 80 443
 CMD ["nginx", "-g", "daemon off;"]

@@ -5,8 +5,8 @@ __pycache__
 *.env
 *.log
 core
-backend/static
 node_modules
-dist
-.cache-loader
-certs
+/backend/static
+/frontend/dist
+/frontend/.cache-loader
+/local
