@@ -9,3 +9,4 @@ backend/static
 node_modules
 dist
 .cache-loader
+certs

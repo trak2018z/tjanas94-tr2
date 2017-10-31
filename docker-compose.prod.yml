@@ -93,6 +93,7 @@ services:
       - "${FRONTEND_SSL_PORT:-443}:443"
     volumes:
       - static-files:/usr/src/app/static
+      - "${FRONTEND_SSL_PATH:-./certs}:/etc/certs"
     links:
       - backend
     env_file: .env
