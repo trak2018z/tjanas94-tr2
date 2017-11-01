@@ -1,0 +1,29 @@
+sudo: required
+branches:
+  only:
+  - master
+services:
+- docker
+language: bash
+env:
+- DOCKER_COMPOSE_VERSION=1.17.0-rc1
+before_install:
+- openssl aes-256-cbc -K $encrypted_53c4445fc964_key -iv $encrypted_53c4445fc964_iv -in deploy_key.enc -out ./deploy_key -d
+- sudo apt-get update
+- sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
+- curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+- chmod +x docker-compose
+- sudo mv docker-compose /usr/local/bin
+script:
+- docker run --rm --privileged multiarch/qemu-user-static:register --reset
+- docker-compose -f docker-compose.build.yml build
+- docker login -u="$DOCKER_USER" -p="$DOCKER_PASS"
+- docker push tjanas94/library-frontend-builder
+- docker push tjanas94/library-frontend
+- docker push tjanas94/library-backend
+deploy:
+  provider: script
+  skip_cleanup: true
+  script: chmod 600 deploy_key && ssh -o StrictHostKeyChecking=no -i deploy_key ${DEPLOY_USER}@${DEPLOY_HOST} -p ${DEPLOY_PORT} ${DEPLOY_CMD}
+  on:
+    branch: master

@@ -1,4 +1,4 @@
-FROM node:8.7-stretch as build
+FROM tjanas94/rpi-node as build
 LABEL maintainer="Tomasz Janas"
 
 WORKDIR /usr/src/app
@@ -15,7 +15,7 @@ ENV RECAPTCHA_SITE_KEY="$RECAPTCHA_SITE_KEY"
 COPY frontend .
 RUN npm -s run prod
 
-FROM nginx:1.13
+FROM tjanas94/rpi-nginx
 LABEL maintainer="Tomasz Janas"
 
 COPY --from=build /usr/src/app/dist/prod /usr/src/app
