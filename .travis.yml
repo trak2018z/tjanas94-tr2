@@ -6,7 +6,9 @@ services:
 - docker
 language: bash
 env:
-- DOCKER_COMPOSE_VERSION=1.17.0-rc1
+  global:
+  - DOCKER_COMPOSE_VERSION=1.17.0-rc1
+  - COMPOSE_FILE=docker-compose.build.yml
 before_install:
 - openssl aes-256-cbc -K $encrypted_53c4445fc964_key -iv $encrypted_53c4445fc964_iv -in deploy_key.enc -out ./deploy_key -d
 - sudo apt-get update
@@ -16,12 +18,10 @@ before_install:
 - sudo mv docker-compose /usr/local/bin
 script:
 - docker run --rm --privileged multiarch/qemu-user-static:register --reset
-- docker-compose -f docker-compose.build.yml pull
-- docker-compose -f docker-compose.build.yml build
 - docker login -u="$DOCKER_USER" -p="$DOCKER_PASS"
-- docker push tjanas94/library-frontend-builder
-- docker push tjanas94/library-frontend
-- docker push tjanas94/library-backend
+- docker-compose pull
+- docker-compose build
+- docker-compose push
 deploy:
   provider: script
   skip_cleanup: true
