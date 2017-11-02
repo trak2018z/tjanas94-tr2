@@ -1,7 +1,7 @@
 @import "~styles/config";
 
 .darkBackground {
-  background: $blue-dark;
+  background: $blue-dark !important;
   a:hover {
     background-color: $blue;
   }

@@ -17,7 +17,7 @@ export default class App extends Component<{}, {}> {
   public render() {
     return (
       <Router history={history}>
-        <section className="hero is-fullheight is-info">
+        <section className="hero is-fullheight is-link">
           <div className="hero-head">
             <MenuBar />
             <GlobalNotification />

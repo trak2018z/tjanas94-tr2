@@ -58,7 +58,7 @@ export default class Login extends Component<ILoginProps, {}> {
           <div className="field">
             <div className="control">
               <button
-                className="button is-info is-fullwidth is-size-4"
+                className="button is-link is-fullwidth is-size-4"
                 disabled={loginForm.pending}
               >
                 Zaloguj się
@@ -67,14 +67,14 @@ export default class Login extends Component<ILoginProps, {}> {
           </div>
           <div className="field">
             <div className="control">
-              <Link to="/register" className="button is-link">
+              <Link to="/register" className="button is-text">
                 Zarejestruj się
               </Link>
             </div>
           </div>
           <div className="field">
             <div className="control">
-              <Link to="/password-reset" className="button is-link">
+              <Link to="/password-reset" className="button is-text">
                 Zapomniałeś hasła?
               </Link>
             </div>
@@ -83,7 +83,7 @@ export default class Login extends Component<ILoginProps, {}> {
             <div className="control">
               <a
                 href={`mailto:${config.adminEmail}`}
-                className="button is-link"
+                className="button is-text"
               >
                 Napotkałeś na problem? Skontaktuj się z administratorem.
               </a>

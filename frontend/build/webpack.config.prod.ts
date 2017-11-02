@@ -12,7 +12,7 @@ const baseConf = getBaseConfiguration(true)
 const prodConf: webpack.Configuration = {
   ...baseConf,
   entry: {
-    app: ["./src/index.tsx"],
+    app: ["react-hot-loader/patch", "./src/index.tsx"],
     vendor: config.libraries,
   },
   output: {

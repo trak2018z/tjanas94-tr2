@@ -118,7 +118,7 @@ export default class Register extends Component<IRegisterProps, {}> {
           <div className="field">
             <div className="control">
               <button
-                className="button is-info is-fullwidth is-size-4"
+                className="button is-link is-fullwidth is-size-4"
                 disabled={registerForm.pending}
               >
                 Zarejestruj się
