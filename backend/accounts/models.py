@@ -47,8 +47,8 @@ class User(AbstractBaseUser):
     Password and email are required. Other fields are optional.
     """
 
-    first_name = models.CharField(_('first name'), max_length=30, blank=True)
-    last_name = models.CharField(_('last name'), max_length=30, blank=True)
+    first_name = models.CharField(_('first name'), max_length=30)
+    last_name = models.CharField(_('last name'), max_length=30)
     email = models.EmailField(
         _('email address'),
         unique=True,
@@ -85,6 +85,7 @@ class User(AbstractBaseUser):
 
     EMAIL_FIELD = 'email'
     USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['first_name', 'last_name']
 
     class Meta:
         verbose_name = _('user')

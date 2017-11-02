@@ -28,3 +28,9 @@ deploy:
   script: chmod 600 deploy_key && ssh -o StrictHostKeyChecking=no -i deploy_key ${DEPLOY_USER}@${DEPLOY_HOST} -p ${DEPLOY_PORT} ${DEPLOY_CMD}
   on:
     branch: master
+notifications:
+  email:
+    recipients:
+    - t.janas94@gmail.com
+    on_success: never
+    on_failure: always

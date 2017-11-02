@@ -86,6 +86,7 @@ def register_view(request):
 
     try:
         user.clean_fields()
+        user.clean()
     except ValidationError as e:
         return Response(
             {
