@@ -21,6 +21,7 @@ interface IForm<T extends IStore, U> extends IChildStore<T> {
 interface IRootStore extends IStore {
   userStore: IUserStore
   messageStore: IMessageStore
+  bookStore: IBookStore
   getStoreMap(): any
 }
 
@@ -87,3 +88,55 @@ interface IRegisterForm extends IForm<IUserStore, IRegisterData> {
   validation: IRegisterValidation
   validatePassword(): void
 }
+
+interface IPage {
+  last: number
+  count: number
+  current: number
+}
+
+interface IBook {
+  id?: number
+  title: string
+  author?: string
+  publication_year?: number
+  publication_place?: string
+  publishing_house?: string
+  count?: number
+  created?: string
+  modified?: string
+  available?: boolean
+}
+
+interface IBookQuery {
+  title?: string
+  author?: string
+  available?: string
+  publication_year__gte?: number
+  publication_year__lte?: number
+  page: number
+}
+
+interface IBookResponse {
+  count: number
+  results: IBook[]
+}
+
+
+interface IBookStore extends IChildStore<IRootStore> {
+  bookSearchForm: IBookSearchForm
+  bookEditForm: IBookEditForm
+  books: IBook[]
+  book?: IBook
+  query: IBookQuery
+  page: IPage
+
+  fetchBooks(query?: IBookQuery): Promise<void>
+  saveBook(book: IBook): Promise<IBook>
+  deleteBook(id: number): () => Promise<void>
+  changePage(page: number): () => Promise<void>
+  getBook(id: number): Promise<void>
+}
+
+type IBookSearchForm = IForm<IBookStore, IBookQuery>
+type IBookEditForm = IForm<IBookStore, IBook>

@@ -1,5 +1,7 @@
 from django.db import models
 from django.utils import timezone
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
 
 from accounts.models import User
 
@@ -26,7 +28,7 @@ class Book(models.Model):
     description = models.TextField('opis', blank=True, null=True)
     file_name = models.CharField(
         'nazwa pliku', max_length=100, blank=True, null=True)
-    tags = models.ManyToManyField(Tag, verbose_name='tagi')
+    tags = models.ManyToManyField(Tag, verbose_name='tagi', blank=True)
 
 
 class Lending(models.Model):
@@ -37,8 +39,7 @@ class Lending(models.Model):
     class Meta:
         permissions = (
             ('view_own_lendings', 'Can view own lendings'),
-            ('view_all_lendings', 'Can view all lendings'),
-        )
+            ('view_all_lendings', 'Can view all lendings'), )
 
 
 class LendingHistory(models.Model):
@@ -58,3 +59,8 @@ class LendingHistory(models.Model):
     user = models.ForeignKey(User, verbose_name='użytkownik')
     lending = models.ForeignKey(Lending, verbose_name='wypożyczenie')
     created = models.DateTimeField('utworzone', default=timezone.now)
+
+
+@receiver(pre_save, sender=Book)
+def book_modified(sender, instance, **kwargs):
+    instance.modified = timezone.now()

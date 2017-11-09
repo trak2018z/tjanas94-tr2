@@ -12,9 +12,10 @@ export default {
     "mobx",
     "mobx-react",
     "mobx-react-devtools",
-    "classnames",
     "axios",
     "js-cookie",
     "js-logger",
+    "qs",
+    "moment",
   ],
 }

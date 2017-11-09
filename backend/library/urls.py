@@ -17,11 +17,15 @@ from django.conf.urls import url, include
 from django.contrib.auth.decorators import login_required
 from django.contrib import admin
 from django.conf import settings
-
+from rest_framework import routers
 from accounts.views import profile_view, login_view, logout_view, register_view, activate_view
+from books.views import BookViewSet
 
 admin.autodiscover()
 admin.site.login = login_required(admin.site.login)
+
+router = routers.DefaultRouter(trailing_slash=False)
+router.register(r'books', BookViewSet)
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -30,6 +34,7 @@ urlpatterns = [
     url(r'^api/accounts/logout', logout_view),
     url(r'^api/accounts/register', register_view),
     url(r'^api/accounts/activate/(?P<token>\w+)', activate_view),
+    url(r'^api/', include(router.urls)),
 ]
 
 if settings.DEBUG:

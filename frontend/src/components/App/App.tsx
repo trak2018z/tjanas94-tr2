@@ -11,6 +11,10 @@ import GlobalNotification from "components/GlobalNotification"
 
 import Login from "routes/login/Login"
 import Register from "routes/register/Register"
+import BooksList from "routes/books/BooksList"
+import BooksSearch from "routes/books/BooksSearch"
+
+import styles from "./style"
 
 @observer
 export default class App extends Component<{}, {}> {
@@ -22,10 +26,11 @@ export default class App extends Component<{}, {}> {
             <MenuBar />
             <GlobalNotification />
           </div>
-          <div className="hero-body">
-            <Route exact={true} path="/" component={Landing(Login)} />
+          <div className={`hero-body ${styles.hero}`}>
+            <Route exact={true} path="/" component={Landing(BooksSearch)} />
             <Route path="/login" component={Landing(Login)} />
             <Route path="/register" component={Landing(Register)} />
+            <Route path="/books" component={BooksList} />
           </div>
 
           <div className="hero-foot">

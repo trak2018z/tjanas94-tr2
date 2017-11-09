@@ -1,0 +1,12 @@
+@import '~styles/config';
+
+.card {
+  margin: 10px 0;
+  border-radius: 5px;
+}
+
+.cardButton {
+  &:hover {
+    background: $grey-lighter;
+  }
+}

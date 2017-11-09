@@ -7,10 +7,9 @@ import { AppContainer } from "react-hot-loader"
 import RedBox from "redbox-react"
 
 import "styles"
-import "utils/recaptcha"
 import logger from "utils/logger"
 import config from "config"
-import App from "components/App"
+import App from "components/App/App"
 import stores from "stores"
 
 useStrict(true)
@@ -37,5 +36,5 @@ function renderApp() {
 renderApp()
 
 if (module.hot) {
-  module.hot.accept("components/App", renderApp)
+  module.hot.accept("components/App/App", renderApp)
 }

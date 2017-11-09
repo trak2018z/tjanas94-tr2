@@ -13,8 +13,9 @@
     "prod": "cross-env TS_NODE_PROJECT=build webpack --config build/webpack.config.prod.ts"
   },
   "browserslist": [
-    "> 5%",
-    "last 2 versions"
+    "> 1%",
+    "last 2 versions",
+    "not ie < 11"
   ],
   "babel": {
     "presets": [
@@ -36,10 +37,10 @@
     "trailingComma": true
   },
   "dependencies": {
-    "@types/classnames": "~2.2.3",
     "@types/grecaptcha": "~2.0.34",
     "@types/js-cookie": "~2.1.0",
     "@types/node": "~8.0.33",
+    "@types/qs": "~6.5.1",
     "@types/react": "~16.0.10",
     "@types/react-dom": "~16.0.1",
     "@types/react-hot-loader": "~3.0.4",
@@ -48,12 +49,13 @@
     "axios": "~0.17.0",
     "babel-polyfill": "~6.26.0",
     "bulma": "~0.6.0",
-    "classnames": "~2.2.5",
     "js-cookie": "~2.2.0",
     "js-logger": "~1.4.1",
     "mobx": "~3.3.1",
     "mobx-react": "~4.3.3",
     "mobx-react-devtools": "~4.2.15",
+    "moment": "^2.19.2",
+    "qs": "~6.5.1",
     "react": "~16.0.0",
     "react-dom": "~16.0.0",
     "react-hot-loader": "~3.1.1",

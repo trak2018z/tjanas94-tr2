@@ -14,10 +14,3 @@ export default function renderCaptcha(element: string | HTMLElement) {
     }
   })
 }
-
-window.onLoadRecaptcha = () => {
-  window.recaptchaLoaded = true
-  if (window.shouldRenderCaptcha) {
-    window.shouldRenderCaptcha()
-  }
-}
