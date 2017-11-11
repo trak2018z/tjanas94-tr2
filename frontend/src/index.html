@@ -14,15 +14,8 @@
 
 <body>
   <div id="app"></div>
-  <script type="text/javascript">
-    window.onLoadRecaptcha = function () {
-      window.recaptchaLoaded = true
-      if (window.shouldRenderCaptcha) {
-        window.shouldRenderCaptcha()
-      }
-    }
-  </script>
-  <script src="https://www.google.com/recaptcha/api.js?onload=onLoadRecaptcha&render=explicit" async defer></script>
+  <script type="text/javascript" src="assets/captcha.js" integrity="sha384-M5rflB/HpGzE4KnRvCQO+HMJSwNMsiASmiq3P2EqqZTxcd6ZXUX6dS3J07BfpVw+" crossorigin="anonymous"></script>
+  <script type="text/javascript" src="https://www.google.com/recaptcha/api.js?onload=onLoadRecaptcha&render=explicit" async defer></script>
 </body>
 
 </html>
