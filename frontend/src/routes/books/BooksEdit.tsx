@@ -103,16 +103,18 @@ export default class BooksEdit extends Component<IBooksEditProps, {}> {
                 Zapisz
               </button>
             </div>
-            {bookEditForm.data.id && (
-              <div className="control">
-                <Link
-                  className="button"
-                  to={`/books/${bookEditForm.data.id}/view`}
-                >
-                  Anuluj
-                </Link>
-              </div>
-            )}
+            <div className="control">
+              <Link
+                className="button"
+                to={
+                  bookEditForm.data.id
+                    ? `/books/${bookEditForm.data.id}/view`
+                    : "/books"
+                }
+              >
+                Anuluj
+              </Link>
+            </div>
           </div>
         </form>
       </div>
