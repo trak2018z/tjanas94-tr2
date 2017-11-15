@@ -37,5 +37,6 @@ export default class BookEditForm extends Form<IBookStore, IBook>
       message: "",
       visible: false,
     }
+    this.pending = false
   }
 }

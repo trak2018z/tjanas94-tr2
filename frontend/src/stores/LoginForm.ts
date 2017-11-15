@@ -32,5 +32,6 @@ export default class LoginForm extends Form<IUserStore, ILoginRequest>
       message: "",
       visible: false,
     }
+    this.pending = false
   }
 }

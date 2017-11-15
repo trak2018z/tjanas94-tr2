@@ -34,5 +34,6 @@ export default class BookSearchForm extends Form<IBookStore, IBookQuery>
       message: "",
       visible: false,
     }
+    this.pending = false
   }
 }

@@ -31,19 +31,25 @@ export default class UserStore extends ChildStore<IRootStore>
         throw new Error(err.response.data.detail)
       }
       logger.error(err)
-      throw new Error('Napotkano błąd. Spróbuj ponownie.')
+      throw new Error("Napotkano błąd. Spróbuj ponownie.")
     }
   }
 
   public logout = async () => {
     try {
-      this.setUser(this.getDefaultUser())
-      this.cacheUser()
-      history.push("/")
       await request.post("accounts/logout")
+      this.rootStore.clear()
+      history.push("/")
+      this.rootStore.messageStore.showMessage("Wylogowano pomyślnie")
     } catch (err) {
       logger.error(err)
     }
+  }
+
+  public clear() {
+    this.setUser(this.getDefaultUser())
+    this.cacheUser()
+    this.clearChildStores()
   }
 
   private async fetchUserProfile() {

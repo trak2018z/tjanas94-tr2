@@ -31,6 +31,7 @@ export default class LendingSearchForm extends Form<ILendingStore, ILendingQuery
       message: "",
       visible: false,
     }
+    this.pending = false
   }
 
   private convertToRequest(data: ILendingQuery) {

@@ -9,18 +9,10 @@ import LendingSearchForm from "stores/LendingSearchForm"
 export default class LendingStore extends ChildStore<IRootStore>
   implements ILendingStore {
   public static PAGE_SIZE = 10
-  @observable public lendings: ILending[] = []
+  @observable public lendings: ILending[]
   @observable public lending?: ILending
-  @observable
-  public query: ILendingRequest = {
-    page: 1,
-  }
-  @observable
-  public page: IPage = {
-    count: 0,
-    last: 1,
-    current: 1,
-  }
+  @observable public query: ILendingRequest
+  @observable public page: IPage
   public lendingSearchForm: ILendingSearchForm = new LendingSearchForm(
     this.rootStore,
     this
@@ -113,5 +105,19 @@ export default class LendingStore extends ChildStore<IRootStore>
       runInAction(() => (this.lending = undefined))
       logger.error(err)
     }
+  }
+
+  public clear() {
+    this.lendings = []
+    this.lending = undefined
+    this.query = {
+      page: 1,
+    }
+    this.page = {
+      count: 0,
+      last: 1,
+      current: 1,
+    }
+    this.clearChildStores()
   }
 }

@@ -1,5 +1,7 @@
 interface IStore {
   getChildStores(): any
+  clearChildStores(): any
+  clear(): void
 }
 
 interface IChildStore<T extends IStore> extends IStore {
@@ -13,7 +15,6 @@ interface IForm<T extends IStore, U> extends IChildStore<T> {
   error: IMessage
 
   updateField(field: keyof U): (event: any) => void
-  clear(): void
   submit(event: any): void
   sendRequest(): Promise<void>
 }

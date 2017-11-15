@@ -10,18 +10,10 @@ import BookEditForm from "stores/BookEditForm"
 export default class BookStore extends ChildStore<IRootStore>
   implements IBookStore {
   public static PAGE_SIZE = 10
-  @observable public books: IBook[] = []
+  @observable public books: IBook[]
   @observable public book?: IBook
-  @observable
-  public query: IBookQuery = {
-    page: 1,
-  }
-  @observable
-  public page: IPage = {
-    count: 0,
-    last: 1,
-    current: 1,
-  }
+  @observable public query: IBookQuery
+  @observable public page: IPage
   public bookSearchForm: IBookSearchForm = new BookSearchForm(
     this.rootStore,
     this
@@ -74,6 +66,7 @@ export default class BookStore extends ChildStore<IRootStore>
         await request.delete("books/" + id)
         await this.fetchBooks()
         history.push("/books")
+        this.rootStore.messageStore.showMessage("Usunięto książkę")
       }
     } catch (err) {
       logger.error(err)
@@ -105,5 +98,19 @@ export default class BookStore extends ChildStore<IRootStore>
       runInAction(() => (this.book = undefined))
       logger.error(err)
     }
+  }
+
+  public clear() {
+    this.books = []
+    this.book = undefined
+    this.query = {
+      page: 1,
+    }
+    this.page = {
+      count: 0,
+      last: 1,
+      current: 1,
+    }
+    this.clearChildStores()
   }
 }

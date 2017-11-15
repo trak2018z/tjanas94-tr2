@@ -4,10 +4,7 @@ import cookie from "js-cookie"
 
 export default class MessageStore extends ChildStore<IRootStore>
   implements IMessageStore {
-  @observable public message: IMessage = {
-    message: "",
-    visible: false
-  }
+  @observable public message: IMessage
 
   public showMessage = action((message: string, seconds: number = 10) => {
     if (this.timeout != null) {
@@ -47,6 +44,15 @@ export default class MessageStore extends ChildStore<IRootStore>
     if (message && this.messageMap[message]) {
       this.showMessage(this.messageMap[message])
       cookie.remove('message')
+    }
+  }
+
+  public clear() {
+    if (this.message == null) {
+      this.message = {
+        message: "",
+        visible: false
+      }
     }
   }
 }

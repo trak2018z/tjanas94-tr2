@@ -54,6 +54,7 @@ export default class RegisterForm extends Form<IUserStore, IRegisterData>
       confirmPassword: undefined,
     }
     this.captchaId = undefined
+    this.pending = false
   }
 
   @action.bound

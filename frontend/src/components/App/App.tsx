@@ -28,8 +28,8 @@ export default class App extends Component<IAppProps, {}> {
     const userStore = this.props.userStore!
     return (
       <Router history={history}>
-        <section className="hero is-fullheight is-link">
-          <div className="hero-head">
+        <section className={`hero is-fullheight is-link ${styles.paddingTop}`}>
+          <div className={`hero-head ${styles.stickyHead}`}>
             <MenuBar />
             <GlobalNotification />
           </div>
