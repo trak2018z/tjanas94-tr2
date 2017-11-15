@@ -22,6 +22,7 @@ interface IRootStore extends IStore {
   userStore: IUserStore
   messageStore: IMessageStore
   bookStore: IBookStore
+  lendingStore: ILendingStore
   getStoreMap(): any
 }
 
@@ -42,7 +43,7 @@ interface IUserStore extends IChildStore<IRootStore> {
   registerForm: IRegisterForm
   user: IUser
 
-  hasPermision(perm: string | string[]): boolean
+  hasPermision(...perm: string[]): boolean
   login(data: ILoginRequest): Promise<void>
   logout(): Promise<void>
 }
@@ -117,11 +118,6 @@ interface IBookQuery {
   page: number
 }
 
-interface IBookResponse {
-  count: number
-  results: IBook[]
-}
-
 
 interface IBookStore extends IChildStore<IRootStore> {
   bookSearchForm: IBookSearchForm
@@ -140,3 +136,62 @@ interface IBookStore extends IChildStore<IRootStore> {
 
 type IBookSearchForm = IForm<IBookStore, IBookQuery>
 type IBookEditForm = IForm<IBookStore, IBook>
+
+
+interface ILendingQuery {
+  status?: number
+  user?: string
+  created__gte?: string
+  created__lte?: string
+  page: number
+}
+
+interface ILendingRequest {
+  status?: number
+  user?: string
+  created__gte?: number
+  created__lte?: number
+  page: number
+}
+
+interface ILendingUser {
+  email: string
+  first_name: string
+  last_name: string
+}
+
+interface ILendingBook {
+  id: number
+  title: string
+}
+
+interface ILendingHistory {
+  id: number
+  user: ILendingUser
+  status: number
+  created: string
+}
+
+interface ILending {
+  id: number,
+  history: ILendingHistory[]
+  last_change: ILendingHistory
+  book: ILendingBook
+}
+
+interface ILendingStore extends IChildStore<IRootStore> {
+  lendingSearchForm: ILendingSearchForm
+  lendings: ILending[]
+  lending?: ILending
+  query: ILendingRequest
+  page: IPage
+  lendingStatuses: any
+
+  fetchLendings(query?: ILendingRequest): Promise<void>
+  lendBook(id: number): () => Promise<void>
+  updateLending(id: number, status: number): () => Promise<void>
+  changePage(page: number): () => Promise<void>
+  getLending(id: number): Promise<void>
+}
+
+type ILendingSearchForm = IForm<ILendingStore, ILendingQuery>

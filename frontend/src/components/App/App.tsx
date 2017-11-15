@@ -1,7 +1,7 @@
 import React, { Component } from "react"
 import { Route, Router } from "react-router-dom"
 import DevTools from "mobx-react-devtools"
-import { observer } from "mobx-react"
+import { observer, inject } from "mobx-react"
 
 import config from "config"
 import history from "utils/history"
@@ -13,12 +13,19 @@ import Login from "routes/login/Login"
 import Register from "routes/register/Register"
 import BooksList from "routes/books/BooksList"
 import BooksSearch from "routes/books/BooksSearch"
+import LendingsList from "routes/lendings/LendingsList"
 
 import styles from "./style"
 
+interface IAppProps {
+  userStore?: IUserStore
+}
+
+@inject("userStore")
 @observer
-export default class App extends Component<{}, {}> {
+export default class App extends Component<IAppProps, {}> {
   public render() {
+    const userStore = this.props.userStore!
     return (
       <Router history={history}>
         <section className="hero is-fullheight is-link">
@@ -31,6 +38,10 @@ export default class App extends Component<{}, {}> {
             <Route path="/login" component={Landing(Login)} />
             <Route path="/register" component={Landing(Register)} />
             <Route path="/books" component={BooksList} />
+            {userStore.hasPermision(
+              "books.view_own_lendings",
+              "books.view_all_lendings"
+            ) && <Route path="/lendings" component={LendingsList} />}
           </div>
 
           <div className="hero-foot">

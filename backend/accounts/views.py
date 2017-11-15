@@ -41,8 +41,8 @@ def profile_view(request):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def login_view(request):
-    username = request.data['username']
-    password = request.data['password']
+    username = request.data.get('username', '')
+    password = request.data.get('password', '')
     user = authenticate(request, username=username, password=password)
     if user is not None:
         login(request, user)
@@ -72,17 +72,17 @@ def logout_view(request):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def register_view(request):
-    if not check_captcha(request.data['captcha']):
+    if not check_captcha(request.data.get('captcha', '')):
         return Response({'detail': 'Nieprawidłowy wynik captchy'}, status=400)
 
     group = Group.objects.get_by_natural_key('czytelnicy')
     user = User(
-        email=request.data['email'],
-        first_name=request.data['firstname'],
-        last_name=request.data['lastname'],
+        email=request.data.get('email', ''),
+        first_name=request.data.get('firstname', ''),
+        last_name=request.data.get('lastname', ''),
         is_active=False,
         group=group)
-    user.set_password(request.data['password'])
+    user.set_password(request.data.get('password', ''))
 
     try:
         user.clean_fields()

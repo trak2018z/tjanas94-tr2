@@ -30,11 +30,20 @@ class Book(models.Model):
         'nazwa pliku', max_length=100, blank=True, null=True)
     tags = models.ManyToManyField(Tag, verbose_name='tagi', blank=True)
 
+    def is_available(self):
+        return self.count - self.lending_set.filter(last_change__status__in=[
+            LendingHistory.RESERVED, LendingHistory.LENT,
+            LendingHistory.EXTENDED
+        ]).count() > 0
+
 
 class Lending(models.Model):
     book = models.ForeignKey(Book, verbose_name='książka')
     last_change = models.ForeignKey(
-        'LendingHistory', verbose_name='ostatnia zmiana', related_name='+')
+        'LendingHistory',
+        verbose_name='ostatnia zmiana',
+        related_name='+',
+        null=True)
 
     class Meta:
         permissions = (
@@ -57,7 +66,8 @@ class LendingHistory(models.Model):
 
     status = models.PositiveSmallIntegerField('status', choices=STATUSES)
     user = models.ForeignKey(User, verbose_name='użytkownik')
-    lending = models.ForeignKey(Lending, verbose_name='wypożyczenie')
+    lending = models.ForeignKey(
+        Lending, verbose_name='wypożyczenie', related_name='history')
     created = models.DateTimeField('utworzone', default=timezone.now)
 
 

@@ -1,14 +1,42 @@
 from rest_framework import serializers
-from .models import Book
+from .models import Book, Lending, LendingHistory
+from accounts.serializers import UserSerializer
 
 
 class BookSerializer(serializers.ModelSerializer):
     available = serializers.SerializerMethodField(read_only=True)
 
     def get_available(self, obj):
-        return obj.count > 0
+        if getattr(obj, 'available', None) is not None:
+            return obj.available > 0
+
+        return obj.is_available()
 
     class Meta:
         model = Book
         fields = '__all__'
         read_only_fields = ('created', 'modified')
+
+
+class LendingHistorySerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+
+    class Meta:
+        model = LendingHistory
+        exclude = ('lending',)
+
+
+class BookTitleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Book
+        fields = ('id', 'title')
+
+
+class LendingSerializer(serializers.ModelSerializer):
+    history = LendingHistorySerializer(many=True)
+    last_change = LendingHistorySerializer()
+    book = BookTitleSerializer()
+
+    class Meta:
+        model = Lending
+        fields = '__all__'

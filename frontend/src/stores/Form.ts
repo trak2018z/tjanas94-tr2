@@ -1,5 +1,6 @@
 import ChildStore from "stores/ChildStore"
 import { action, observable } from "mobx"
+import moment from "moment"
 
 export default abstract class Form<T extends IStore, U> extends ChildStore<T>
   implements IForm<T, U> {
@@ -14,6 +15,14 @@ export default abstract class Form<T extends IStore, U> extends ChildStore<T>
 
   public updateField(field: keyof U) {
     return action((event: any) => this.data[field] = event.target.value)
+  }
+
+  public updateTimestamp(field: keyof U) {
+    return action((event: any) => {
+      const anyData: any = this.data
+      const date = moment(event.target.value, 'YYYY-MM-DD', true)
+      anyData[field] = date.isValid() ? date.unix() : undefined
+    })
   }
 
   public submit = (event: any) => {

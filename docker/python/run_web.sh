@@ -7,11 +7,11 @@ sleep 10
 echo "Collect static files"
 python manage.py collectstatic --noinput
 
-echo "Update permissions"
-python manage.py update_permissions
-
 echo "Apply database migrations"
 python manage.py migrate
+
+echo "Update permissions"
+python manage.py update_permissions
 
 if [ "$PROD" == "true" ]; then
   uwsgi --ini /etc/uwsgi.ini

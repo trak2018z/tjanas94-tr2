@@ -17,14 +17,8 @@ export default class UserStore extends ChildStore<IRootStore>
     this.loadUser()
   }
 
-  public hasPermision(perm: string | string[]) {
-    if (this.user.admin) {
-      return true
-    }
-    if (perm instanceof Array) {
-      return perm.some(p => this.user.permissions.includes(p))
-    }
-    return this.user.permissions.includes(perm)
+  public hasPermision(...perm: string[]) {
+    return this.user.admin || perm.some(p => this.user.permissions.includes(p))
   }
 
   public login = async (data: ILoginRequest) => {

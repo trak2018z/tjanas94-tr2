@@ -22,7 +22,8 @@ const MenuBar = ({ userStore }: IMenuBarProps) => (
             Książki
           </Link>
           {userStore!.hasPermision(
-            ["books.view_own_lendings", "books.view_all_lendings"]
+            "books.view_own_lendings",
+            "books.view_all_lendings"
           ) && (
             <Link to="/lendings" className="navbar-item">
               Wypożyczenia

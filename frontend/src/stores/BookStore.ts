@@ -50,7 +50,7 @@ export default class BookStore extends ChildStore<IRootStore>
     try {
       const anyBook: any = book
       for (const [key, value] of Object.entries(anyBook)) {
-        if (value === '') {
+        if (value === "") {
           anyBook[key] = null
         }
       }
@@ -60,7 +60,7 @@ export default class BookStore extends ChildStore<IRootStore>
       await this.fetchBooks()
       return response.data
     } catch (err) {
-      if (err.response && err.response.status === 400 && err.response.data.detail) {
+      if (err.response && err.response.data.detail) {
         throw new Error(err.response.data.detail)
       }
       logger.error(err)
@@ -73,7 +73,7 @@ export default class BookStore extends ChildStore<IRootStore>
       if (confirm("Czy na pewno usunąć?")) {
         await request.delete("books/" + id)
         await this.fetchBooks()
-        history.push(`/books`)
+        history.push("/books")
       }
     } catch (err) {
       logger.error(err)
@@ -97,7 +97,7 @@ export default class BookStore extends ChildStore<IRootStore>
       const response = await request.get("books/" + id)
       for (const [key, value] of Object.entries(response.data)) {
         if (value == null) {
-          response.data[key] = ''
+          response.data[key] = ""
         }
       }
       runInAction(() => (this.book = response.data))
