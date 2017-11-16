@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Book, Lending, LendingHistory
-from accounts.serializers import UserSerializer
+from accounts.serializers import LendingUserSerializer
 
 
 class BookSerializer(serializers.ModelSerializer):
@@ -19,7 +19,7 @@ class BookSerializer(serializers.ModelSerializer):
 
 
 class LendingHistorySerializer(serializers.ModelSerializer):
-    user = UserSerializer()
+    user = LendingUserSerializer()
 
     class Meta:
         model = LendingHistory

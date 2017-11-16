@@ -1,9 +1,9 @@
-import Form from "stores/Form"
+import FormStore from "stores/FormStore"
 import { toJS, action, runInAction } from "mobx"
 import history from "utils/history"
 
-export default class BookSearchForm extends Form<IBookStore, IBookQuery>
-  implements IBookSearchForm {
+export default class BookSearchStore extends FormStore<IBookStore, IBookQuery>
+  implements IBookSearchStore {
   public async sendRequest() {
     try {
       runInAction(() => {

@@ -1,46 +1,58 @@
-import React from "react"
+import React, { Component } from "react"
 import { Route, Link } from "react-router-dom"
 import { observer, inject } from "mobx-react"
 import styles from "components/style"
-import LendingsSearch from "./LendingsSearch"
+import LendingSearch from "./LendingSearch"
 import Paginator from "components/Paginator"
 import EmptyCard from "components/EmptyCard"
-import LendingsView from "./LendingsView"
+import LendingView from "./LendingView"
 import moment from "moment"
 
-interface ILendingsListProps {
+interface ILendingListProps {
   userStore?: IUserStore
   lendingStore?: ILendingStore
 }
 
-const LendingsList = ({ lendingStore, userStore }: ILendingsListProps) => (
-  <div className="container">
-    <div className="columns">
-      <div className="column is-6">
-        <Paginator
-          page={lendingStore!.page}
-          changePage={lendingStore!.changePage}
-        />
-        {lendingStore!.lendings.length ? (
-          lendingStore!.lendings.map(lending => (
-            <LendingCard
-              key={lending.id}
-              lending={lending}
-              lendingStore={lendingStore!}
-              userStore={userStore!}
+@inject("lendingStore", "userStore")
+@observer
+export default class LendingList extends Component<ILendingListProps, {}> {
+  public componentDidMount() {
+    this.props.lendingStore!.fetchLendings()
+  }
+
+  public render() {
+    const userStore = this.props.userStore!
+    const lendingStore = this.props.lendingStore!
+    return (
+      <div className="container">
+        <div className="columns">
+          <div className="column is-6">
+            <Paginator
+              page={lendingStore.page}
+              changePage={lendingStore.changePage}
             />
-          ))
-        ) : (
-          <EmptyCard />
-        )}
+            {lendingStore.lendings.length ? (
+              lendingStore.lendings.map(lending => (
+                <LendingCard
+                  key={lending.id}
+                  lending={lending}
+                  lendingStore={lendingStore}
+                  userStore={userStore}
+                />
+              ))
+            ) : (
+              <EmptyCard />
+            )}
+          </div>
+          <div className="column is-5 is-offset-1">
+            <Route path="/lendings/:id/view" component={LendingView} />
+            <LendingSearch />
+          </div>
+        </div>
       </div>
-      <div className="column is-5 is-offset-1">
-        <Route path="/lendings/:id/view" component={LendingsView} />
-        <LendingsSearch />
-      </div>
-    </div>
-  </div>
-)
+    )
+  }
+}
 
 interface ILendingCardProps {
   lending: ILending
@@ -53,12 +65,15 @@ const LendingCard = observer(
     <div className={`card ${styles.card}`}>
       <div className="card-content">
         <p className="is-size-4">{lending.book.title}</p>
-        {userStore!.hasPermision("books.view_all_lendings") && (
+        {userStore.hasPermision("books.view_all_lendings") && (
           <p>
-            Utworzone przez: {lending.history[0].user.first_name} {lending.history[0].user.last_name} ({lending.history[0].user.email})
+            Utworzone przez: {lending.history[0].user.first_name}{" "}
+            {lending.history[0].user.last_name} ({lending.history[0].user.email})
           </p>
         )}
-        <p>Status: {lendingStore.lendingStatuses[lending.last_change.status]}</p>
+        <p>
+          Status: {lendingStore.lendingStatuses[lending.last_change.status]}
+        </p>
         <p>
           Ostatnia aktualizacja:{" "}
           {moment(lending.last_change.created).format("YYYY-MM-DD HH:mm")}
@@ -72,7 +87,7 @@ const LendingCard = observer(
               Więcej informacji
             </Link>
           </div>
-          {userStore!.hasPermision("books.view_all_lendings") &&
+          {userStore.hasPermision("books.view_all_lendings") &&
             lending.last_change.status === 1 && (
               <div className="control">
                 <div className="control">
@@ -85,7 +100,7 @@ const LendingCard = observer(
                 </div>
               </div>
             )}
-          {userStore!.hasPermision("books.view_all_lendings") &&
+          {userStore.hasPermision("books.view_all_lendings") &&
             lending.last_change.status === 2 && (
               <div className="control">
                 <div className="control">
@@ -98,7 +113,7 @@ const LendingCard = observer(
                 </div>
               </div>
             )}
-          {userStore!.hasPermision("books.view_all_lendings") &&
+          {userStore.hasPermision("books.view_all_lendings") &&
             [2, 3].includes(lending.last_change.status) && (
               <div className="control">
                 <div className="control">
@@ -126,5 +141,3 @@ const LendingCard = observer(
     </div>
   )
 )
-
-export default inject("lendingStore", "userStore")(observer(LendingsList))

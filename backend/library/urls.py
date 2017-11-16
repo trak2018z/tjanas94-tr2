@@ -18,7 +18,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import admin
 from django.conf import settings
 from rest_framework import routers
-from accounts.views import profile_view, login_view, logout_view, register_view, activate_view
+from accounts.views import profile_view, login_view, logout_view, register_view, activate_view, edit_profile_view
 from books.views import LendBookView, LendingUpdateView
 from books.views import BookViewSet, LendingViewSet
 
@@ -31,6 +31,7 @@ router.register(r'lendings', LendingViewSet, base_name='lending')
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^api/accounts/profile/edit', edit_profile_view),
     url(r'^api/accounts/profile', profile_view),
     url(r'^api/accounts/login', login_view),
     url(r'^api/accounts/logout', logout_view),

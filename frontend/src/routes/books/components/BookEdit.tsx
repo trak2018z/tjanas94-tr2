@@ -4,19 +4,19 @@ import { toJS, runInAction } from "mobx"
 import { observer, inject } from "mobx-react"
 import Notification from "components/Notification"
 
-interface IBooksEditProps {
-  bookEditForm?: IBookEditForm
+interface IBookEditProps {
+  bookEditForm?: IBookEditStore
   match?: any
 }
 
 @inject("bookEditForm")
 @observer
-export default class BooksEdit extends Component<IBooksEditProps, {}> {
+export default class BookEdit extends Component<IBookEditProps, {}> {
   public componentDidMount() {
     this.fetchBook(this.props.match.params.id)
   }
 
-  public componentWillReceiveProps(nextProps: IBooksEditProps) {
+  public componentWillReceiveProps(nextProps: IBookEditProps) {
     if (nextProps.match.params.id !== this.props.match.params.id) {
       this.fetchBook(nextProps.match.params.id)
     }

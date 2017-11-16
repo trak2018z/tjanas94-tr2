@@ -1,19 +1,22 @@
 import React, { Component } from "react"
 import { Route, Router } from "react-router-dom"
-import DevTools from "mobx-react-devtools"
 import { observer, inject } from "mobx-react"
+import DevTools from "mobx-react-devtools"
 
 import config from "config"
 import history from "utils/history"
-import MenuBar from "components/MenuBar/MenuBar"
+import MenuBar from "components/MenuBar"
 import Landing from "components/Landing"
 import GlobalNotification from "components/GlobalNotification"
 
-import Login from "routes/login/Login"
-import Register from "routes/register/Register"
-import BooksList from "routes/books/BooksList"
-import BooksSearch from "routes/books/BooksSearch"
-import LendingsList from "routes/lendings/LendingsList"
+import {
+  LoginForm,
+  RegisterForm,
+  ProfileView,
+  ProfileForm,
+} from "routes/accounts"
+import { BookList, BookSearch } from "routes/books"
+import { LendingList } from "routes/lendings"
 
 import styles from "./style"
 
@@ -34,14 +37,20 @@ export default class App extends Component<IAppProps, {}> {
             <GlobalNotification />
           </div>
           <div className={`hero-body ${styles.hero}`}>
-            <Route exact={true} path="/" component={Landing(BooksSearch)} />
-            <Route path="/login" component={Landing(Login)} />
-            <Route path="/register" component={Landing(Register)} />
-            <Route path="/books" component={BooksList} />
+            <Route exact={true} path="/" component={Landing(BookSearch)} />
+            <Route path="/login" component={Landing(LoginForm)} />
+            <Route path="/register" component={Landing(RegisterForm)} />
+            <Route path="/books" component={BookList} />
             {userStore.hasPermision(
               "books.view_own_lendings",
               "books.view_all_lendings"
-            ) && <Route path="/lendings" component={LendingsList} />}
+            ) && <Route path="/lendings" component={LendingList} />}
+            {userStore.user.authenticated && (
+              <Route exact={true} path="/profile" component={Landing(ProfileView)} />
+            )}
+            {userStore.user.authenticated && (
+              <Route path="/profile/edit" component={Landing(ProfileForm)} />
+            )}
           </div>
 
           <div className="hero-foot">

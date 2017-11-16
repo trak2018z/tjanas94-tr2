@@ -1,9 +1,9 @@
 import Store from "stores/Store"
-import UserStore from "stores/UserStore"
-import MessageStore from "stores/MessageStore"
-import BookStore from "stores/BookStore"
-import LendingStore from "stores/LendingStore"
 import { action } from "mobx"
+import MessageStore from "stores/MessageStore"
+import { UserStore } from "routes/accounts"
+import { BookStore } from "routes/books"
+import { LendingStore } from "routes/lendings"
 
 export default class RootStore extends Store implements IRootStore {
   public userStore: IUserStore = new UserStore(this, this)

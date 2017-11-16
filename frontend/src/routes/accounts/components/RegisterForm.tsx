@@ -5,12 +5,12 @@ import Notification from "components/Notification"
 import renderCaptcha from "utils/recaptcha"
 
 interface IRegisterProps {
-  registerForm?: IRegisterForm
+  registerForm?: IRegisterFormStore
 }
 
 @inject("registerForm")
 @observer
-export default class Register extends Component<IRegisterProps, {}> {
+export default class RegisterForm extends Component<IRegisterProps, {}> {
   public async componentDidMount() {
     this.props.registerForm!.clear()
     const captchaId = await renderCaptcha("captcha")
@@ -49,8 +49,8 @@ export default class Register extends Component<IRegisterProps, {}> {
                 className="input"
                 type="text"
                 required={true}
-                value={registerForm.data.firstname}
-                onChange={registerForm.updateField("firstname")}
+                value={registerForm.data.first_name}
+                onChange={registerForm.updateField("first_name")}
               />
             </div>
           </div>
@@ -61,8 +61,8 @@ export default class Register extends Component<IRegisterProps, {}> {
                 className="input"
                 type="text"
                 required={true}
-                value={registerForm.data.lastname}
-                onChange={registerForm.updateField("lastname")}
+                value={registerForm.data.last_name}
+                onChange={registerForm.updateField("last_name")}
               />
             </div>
           </div>

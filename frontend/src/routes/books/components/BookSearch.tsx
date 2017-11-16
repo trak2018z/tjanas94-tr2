@@ -2,13 +2,13 @@ import React, { Component } from "react"
 import { observer, inject } from "mobx-react"
 import Notification from "components/Notification"
 
-interface IBooksSearchProps {
-  bookSearchForm?: IBookSearchForm
+interface IBookSearchProps {
+  bookSearchForm?: IBookSearchStore
 }
 
 @inject("bookSearchForm")
 @observer
-export default class BooksSearch extends Component<IBooksSearchProps, {}> {
+export default class BookSearch extends Component<IBookSearchProps, {}> {
   public componentDidMount() {
     this.props.bookSearchForm!.clear()
   }

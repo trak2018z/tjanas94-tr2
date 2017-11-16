@@ -38,7 +38,7 @@ const MenuBar = ({ userStore }: IMenuBarProps) => (
           {userStore!.user.authenticated && (
             <Link to="/profile" className="navbar-item">
               <i className="icon fa fa-user" />
-              {userStore!.user.firstname} {userStore!.user.lastname}
+              {userStore!.user.first_name} {userStore!.user.last_name}
             </Link>
           )}
           {userStore!.user.authenticated && (

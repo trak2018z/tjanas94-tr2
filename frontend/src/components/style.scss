@@ -10,3 +10,26 @@
     background: $grey-lighter;
   }
 }
+
+.hero {
+  align-items: flex-start !important;
+}
+
+.stickyHead {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;
+}
+
+.paddingTop {
+  padding-top: 100px;
+}
+
+.darkBackground {
+  background: $blue-dark !important;
+  a:hover {
+    background-color: $blue;
+  }
+}

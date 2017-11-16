@@ -9,8 +9,8 @@ import RedBox from "redbox-react"
 import "styles"
 import logger from "utils/logger"
 import config from "config"
-import App from "components/App/App"
 import stores from "stores"
+import App from "components/App"
 
 useStrict(true)
 const appElement = document.getElementById("app")
@@ -36,5 +36,5 @@ function renderApp() {
 renderApp()
 
 if (module.hot) {
-  module.hot.accept("components/App/App", renderApp)
+  module.hot.accept("components/App", renderApp)
 }

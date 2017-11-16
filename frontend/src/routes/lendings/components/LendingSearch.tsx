@@ -3,16 +3,16 @@ import { observer, inject } from "mobx-react"
 import Notification from "components/Notification"
 import moment from "moment"
 
-interface ILendingsSearchProps {
-  lendingSearchForm?: ILendingSearchForm
+interface ILendingSearchProps {
+  lendingSearchForm?: ILendingSearchStore
   lendingStore?: ILendingStore
   userStore?: IUserStore
 }
 
 @inject("lendingSearchForm", "lendingStore", "userStore")
 @observer
-export default class LendingsSearch extends Component<
-  ILendingsSearchProps,
+export default class LendingSearch extends Component<
+  ILendingSearchProps,
   {}
 > {
   public componentDidMount() {

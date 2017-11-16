@@ -1,12 +1,12 @@
-import Form from "stores/Form"
+import FormStore from "stores/FormStore"
 import { toJS, action, runInAction, observable } from "mobx"
-import request from "utils/request"
-import logger from "utils/logger"
 import history from "utils/history"
 
-export default class RegisterForm extends Form<IUserStore, IRegisterData>
-  implements IRegisterForm {
-  @observable public validation: IRegisterValidation
+export default class RegisterFormStore extends FormStore<
+  IUserStore,
+  IRegisterData
+> implements IRegisterFormStore {
+  @observable public validation: IPasswordValidation
   @observable public captchaId?: number
 
   public async sendRequest() {
@@ -19,8 +19,10 @@ export default class RegisterForm extends Form<IUserStore, IRegisterData>
       }
       runInAction(() => (this.pending = true))
       grecaptcha.reset(this.captchaId)
-      await this.register(this.getRequestData())
-      this.rootStore.messageStore.showMessage('Email z linkiem aktywacyjnym został wysłany na podany adres')
+      await this.parentStore.register(this.getRequestData())
+      this.rootStore.messageStore.showMessage(
+        "Email z linkiem aktywacyjnym został wysłany na podany adres"
+      )
       history.push("/login")
       this.clear()
     } catch (err) {
@@ -39,8 +41,8 @@ export default class RegisterForm extends Form<IUserStore, IRegisterData>
   public clear() {
     this.data = {
       email: "",
-      firstname: "",
-      lastname: "",
+      first_name: "",
+      last_name: "",
       password: "",
       confirmPassword: "",
       captcha: "",
@@ -59,35 +61,16 @@ export default class RegisterForm extends Form<IUserStore, IRegisterData>
 
   @action.bound
   public validatePassword() {
-    const rules = [
-      /(?=[0-9]+)/,
-      /(?=[A-Z]+)/,
-      /(?=[a-z]+)/,
-      /(?=[^a-zA-Z0-9]+)/,
-      /(?=.{8,})/,
-    ]
-    const validPassword = rules.every(r => r.test(this.data.password))
-    this.validation.password = validPassword
+    this.validation.password = this.parentStore.validatePassword(
+      this.data.password
+    )
       ? undefined
       : "Hasło musi zawierać conajmniej 8 znaków w tym: duże litery, małe litery, liczby, znaki specjalne"
 
-    const validConfirmPassword =
+    this.validation.confirmPassword =
       this.data.password === this.data.confirmPassword
-    this.validation.confirmPassword = validConfirmPassword
-      ? undefined
-      : "Hasła muszą być takie same"
-  }
-
-  private async register(data: IRegisterRequest) {
-    try {
-      await request.post("accounts/register", data)
-    } catch (err) {
-      if (err.response && err.response.status === 400) {
-        throw new Error(err.response.data.detail)
-      }
-      logger.error(err)
-      throw new Error('Napotkano błąd. Spróbuj ponownie.')
-    }
+        ? undefined
+        : "Hasła muszą być takie same"
   }
 
   private getRequestData() {
@@ -96,10 +79,10 @@ export default class RegisterForm extends Form<IUserStore, IRegisterData>
   }
 
   private isValid() {
-    const anyThis = this as any
+    this.validatePassword()
     return (
-      Object.keys(this.validation).every(v => !anyThis[v]) &&
-      !!this.data.captcha.length
+      !!this.data.captcha.length &&
+      Object.entries(this.validation).every(([_, v]) => !v)
     )
   }
 }

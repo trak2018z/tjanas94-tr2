@@ -4,7 +4,7 @@ import qs from "qs"
 import history from "utils/history"
 import request from "utils/request"
 import logger from "utils/logger"
-import LendingSearchForm from "stores/LendingSearchForm"
+import LendingSearchStore from "./LendingSearchStore"
 
 export default class LendingStore extends ChildStore<IRootStore>
   implements ILendingStore {
@@ -13,7 +13,7 @@ export default class LendingStore extends ChildStore<IRootStore>
   @observable public lending?: ILending
   @observable public query: ILendingRequest
   @observable public page: IPage
-  public lendingSearchForm: ILendingSearchForm = new LendingSearchForm(
+  public lendingSearchForm: ILendingSearchStore = new LendingSearchStore(
     this.rootStore,
     this
   )

@@ -14,6 +14,7 @@ import uuid
 
 from .models import User, Group
 from .utils import check_captcha
+from .serializers import UserSerializer
 
 
 @ensure_csrf_cookie
@@ -22,15 +23,7 @@ from .utils import check_captcha
 @permission_classes([AllowAny])
 def profile_view(request):
     if request.user.is_authenticated:
-        return Response({
-            'user': {
-                'email': request.user.email,
-                'firstname': request.user.first_name,
-                'lastname': request.user.last_name,
-                'admin': request.user.is_superuser,
-                'permissions': request.user.get_all_permissions(),
-            }
-        })
+        return Response({'user': UserSerializer(request.user).data})
 
     return Response({'detail': 'Nie jesteś zalogowany'})
 
@@ -46,15 +39,7 @@ def login_view(request):
     user = authenticate(request, username=username, password=password)
     if user is not None:
         login(request, user)
-        return Response({
-            'user': {
-                'email': user.email,
-                'firstname': user.first_name,
-                'lastname': user.last_name,
-                'admin': user.is_superuser,
-                'permissions': user.get_all_permissions(),
-            }
-        })
+        return Response({'user': UserSerializer(user).data})
 
     return Response({'detail': 'Nieprawidłowe dane logowania'}, status=401)
 
@@ -68,7 +53,9 @@ def logout_view(request):
     return Response(status=204)
 
 
+@sensitive_variables()
 @csrf_protect
+@never_cache
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def register_view(request):
@@ -78,8 +65,8 @@ def register_view(request):
     group = Group.objects.get_by_natural_key('czytelnicy')
     user = User(
         email=request.data.get('email', ''),
-        first_name=request.data.get('firstname', ''),
-        last_name=request.data.get('lastname', ''),
+        first_name=request.data.get('first_name', ''),
+        last_name=request.data.get('last_name', ''),
         is_active=False,
         group=group)
     user.set_password(request.data.get('password', ''))
@@ -108,7 +95,7 @@ def register_view(request):
 
     template = loader.get_template('accounts/email_activation.html')
     context = {
-        'firstname': user.first_name,
+        'first_name': user.first_name,
         'link': link,
     }
     html = template.render(context, request)
@@ -139,3 +126,51 @@ def activate_view(request, token):
 
     response.set_cookie('message', 'activation_success')
     return response
+
+
+@sensitive_variables()
+@csrf_protect
+@never_cache
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def edit_profile_view(request):
+    try:
+        user = User.objects.get(pk=request.user.id)
+    except User.DoesNotExist:
+        return Response(
+            {
+                'detail': 'Użytkownik nie istnieje',
+            }, status=404)
+
+    if not user.check_password(request.data.get('old_password', '')):
+        return Response(
+            {
+                'detail': 'Nieprawidłowe hasło',
+            }, status=400)
+
+    user.email = request.data.get('email', '')
+    user.first_name = request.data.get('first_name', '')
+    user.last_name = request.data.get('last_name', '')
+    if request.data.get('password'):
+        user.set_password(request.data.get('password'))
+
+    try:
+        user.clean_fields()
+        user.clean()
+    except ValidationError as e:
+        return Response(
+            {
+                'detail': 'Dane użytkownika są błędne',
+                'validation': e
+            },
+            status=400)
+
+    try:
+        user.validate_unique()
+    except ValidationError as e:
+        return Response({'detail': 'Adres email jest zajęty'}, status=400)
+
+    user.save()
+    login(request, user)
+
+    return Response({'user': UserSerializer(user).data})

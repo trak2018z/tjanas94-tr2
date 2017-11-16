@@ -2,19 +2,19 @@ import React, { Component } from "react"
 import { observer, inject } from "mobx-react"
 import moment from "moment"
 
-interface IBooksViewProps {
+interface IBookViewProps {
   bookStore?: IBookStore
   match?: any
 }
 
 @inject("bookStore")
 @observer
-export default class BooksView extends Component<IBooksViewProps, {}> {
+export default class BookView extends Component<IBookViewProps, {}> {
   public componentDidMount() {
     this.props.bookStore!.getBook(this.props.match.params.id)
   }
 
-  public componentWillReceiveProps(nextProps: IBooksViewProps) {
+  public componentWillReceiveProps(nextProps: IBookViewProps) {
     if (nextProps.match.params.id !== this.props.match.params.id) {
       this.props.bookStore!.getBook(nextProps.match.params.id)
     }

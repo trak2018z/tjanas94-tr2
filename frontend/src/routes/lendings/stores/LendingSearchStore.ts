@@ -1,9 +1,9 @@
-import Form from "stores/Form"
+import FormStore from "stores/FormStore"
 import { toJS, action, runInAction } from "mobx"
 import moment from "moment"
 
-export default class LendingSearchForm extends Form<ILendingStore, ILendingQuery>
-  implements ILendingSearchForm {
+export default class LendingSearchStore extends FormStore<ILendingStore, ILendingQuery>
+  implements ILendingSearchStore {
   public async sendRequest() {
     try {
       runInAction(() => {

@@ -4,8 +4,8 @@ import qs from "qs"
 import history from "utils/history"
 import request from "utils/request"
 import logger from "utils/logger"
-import BookSearchForm from "stores/BookSearchForm"
-import BookEditForm from "stores/BookEditForm"
+import BookSearchStore from "./BookSearchStore"
+import BookEditStore from "./BookEditStore"
 
 export default class BookStore extends ChildStore<IRootStore>
   implements IBookStore {
@@ -14,11 +14,11 @@ export default class BookStore extends ChildStore<IRootStore>
   @observable public book?: IBook
   @observable public query: IBookQuery
   @observable public page: IPage
-  public bookSearchForm: IBookSearchForm = new BookSearchForm(
+  public bookSearchForm: IBookSearchStore = new BookSearchStore(
     this.rootStore,
     this
   )
-  public bookEditForm: IBookEditForm = new BookEditForm(this.rootStore, this)
+  public bookEditForm: IBookEditStore = new BookEditStore(this.rootStore, this)
 
   public async fetchBooks(query: IBookQuery = this.query) {
     try {

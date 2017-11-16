@@ -5,12 +5,12 @@ import Notification from "components/Notification"
 import config from "config"
 
 interface ILoginProps {
-  loginForm?: ILoginForm
+  loginForm?: ILoginFormStore
 }
 
 @inject("loginForm")
 @observer
-export default class Login extends Component<ILoginProps, {}> {
+export default class LoginForm extends Component<ILoginProps, {}> {
   public componentDidMount() {
     this.props.loginForm!.clear()
   }

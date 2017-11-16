@@ -1,14 +1,14 @@
-import Form from "stores/Form"
+import FormStore from "stores/FormStore"
 import { toJS, action, runInAction } from "mobx"
 import history from "utils/history"
 
-export default class LoginForm extends Form<IUserStore, ILoginRequest>
-  implements ILoginForm {
+export default class BookEditStore extends FormStore<IBookStore, IBook>
+  implements IBookEditStore {
   public async sendRequest() {
     try {
-      runInAction(() => (this.pending = true))
-      await this.parentStore.login(toJS(this.data))
-      history.push("/")
+      runInAction(() => this.pending = true)
+      const book = await this.parentStore.saveBook(toJS(this.data))
+      history.push(`/books/${book.id}/view`)
       this.clear()
     } catch (err) {
       runInAction(
@@ -25,8 +25,13 @@ export default class LoginForm extends Form<IUserStore, ILoginRequest>
   @action.bound
   public clear() {
     this.data = {
-      username: "",
-      password: "",
+      id: undefined,
+      title: '',
+      author: '',
+      publication_year: new Date().getFullYear(),
+      publication_place: '',
+      publishing_house: '',
+      count: 0,
     }
     this.error = {
       message: "",

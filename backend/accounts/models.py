@@ -1,5 +1,4 @@
 from django.db import models
-from django.contrib import auth
 from django.contrib.auth.models import (
     BaseUserManager,
     AbstractBaseUser,
@@ -73,11 +72,6 @@ class User(AbstractBaseUser):
         blank=True,
         help_text='Grupa do której należy użytkownik.', )
     date_joined = models.DateTimeField(_('date joined'), default=timezone.now)
-    last_password_change = models.DateTimeField(
-        'data ostatniej zmiany hasła',
-        default=timezone.now,
-        null=True,
-        blank=True)
     activation_date = models.DateTimeField(
         'data aktywacji', null=True, blank=True)
 
@@ -155,9 +149,3 @@ class User(AbstractBaseUser):
         return any(
             perm.startswith(app_label + '.')
             for perm in self.get_all_permissions())
-
-
-class PasswordHistory(models.Model):
-    password = models.CharField('hasło', max_length=128)
-    created = models.DateTimeField('utworzone', default=timezone.now)
-    user = models.ForeignKey(User, verbose_name='użytkownik')

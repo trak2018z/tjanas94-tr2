@@ -6,10 +6,6 @@ from django.dispatch import receiver
 from accounts.models import User
 
 
-class Tag(models.Model):
-    text = models.CharField('tekst', max_length=50)
-
-
 class Book(models.Model):
     title = models.CharField('tytuł', max_length=100)
     author = models.CharField('autor', max_length=100, blank=True, null=True)
@@ -24,11 +20,6 @@ class Book(models.Model):
     count = models.PositiveSmallIntegerField('ilość', default=0)
     created = models.DateTimeField('utworzone', default=timezone.now)
     modified = models.DateTimeField('utworzone', default=timezone.now)
-
-    description = models.TextField('opis', blank=True, null=True)
-    file_name = models.CharField(
-        'nazwa pliku', max_length=100, blank=True, null=True)
-    tags = models.ManyToManyField(Tag, verbose_name='tagi', blank=True)
 
     def is_available(self):
         return self.count - self.lending_set.filter(last_change__status__in=[
