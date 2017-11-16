@@ -2,29 +2,20 @@ import FormStore from "stores/FormStore"
 import { toJS, action, runInAction, observable } from "mobx"
 import history from "utils/history"
 
-export default class RegisterFormStore extends FormStore<
+export default class ResetPasswordStep2Store extends FormStore<
   IUserStore,
-  IRegisterData
-> implements IRegisterFormStore {
+  IResetPasswordStep2Data
+> implements IResetPasswordStep2Store {
   @observable public validation: IPasswordValidation
-  @observable public captchaId?: number
 
   public async sendRequest() {
     try {
-      if (this.captchaId != null) {
-        runInAction(
-          () => (this.data.captcha = grecaptcha.getResponse(this.captchaId))
-        )
-      }
       if (!this.isValid()) {
         return
       }
       runInAction(() => (this.pending = true))
-      grecaptcha.reset(this.captchaId)
-      await this.parentStore.register(this.getRequestData())
-      this.rootStore.messageStore.showMessage(
-        "Email z linkiem aktywacyjnym został wysłany na podany adres"
-      )
+      await this.parentStore.resetPasswordStep2(this.getRequestData())
+      this.rootStore.messageStore.showMessage("Zmieniono hasło")
       history.push("/login")
       this.clear()
     } catch (err) {
@@ -42,12 +33,9 @@ export default class RegisterFormStore extends FormStore<
   @action.bound
   public clear() {
     this.data = {
-      email: "",
-      first_name: "",
-      last_name: "",
+      token: "",
       password: "",
       confirmPassword: "",
-      captcha: "",
     }
     this.error = {
       message: "",
@@ -57,14 +45,13 @@ export default class RegisterFormStore extends FormStore<
       password: undefined,
       confirmPassword: undefined,
     }
-    this.captchaId = undefined
     this.pending = false
   }
 
   @action.bound
   public validatePassword() {
     this.validation.password = this.parentStore.validatePassword(
-      this.data.password
+      this.data.password!
     )
       ? undefined
       : "Hasło musi zawierać conajmniej 8 znaków w tym: duże litery, małe litery, liczby, znaki specjalne"
@@ -82,9 +69,6 @@ export default class RegisterFormStore extends FormStore<
 
   private isValid() {
     this.validatePassword()
-    return (
-      !!this.data.captcha.length &&
-      Object.entries(this.validation).every(([_, v]) => !v)
-    )
+    return Object.entries(this.validation).every(([_, v]) => !v)
   }
 }

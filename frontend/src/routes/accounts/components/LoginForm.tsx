@@ -74,7 +74,7 @@ export default class LoginForm extends Component<ILoginProps, {}> {
           </div>
           <div className="field">
             <div className="control">
-              <Link to="/password-reset" className="button is-text">
+              <Link to="/reset_password" className="button is-text">
                 Zapomniałeś hasła?
               </Link>
             </div>

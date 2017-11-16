@@ -174,3 +174,77 @@ def edit_profile_view(request):
     login(request, user)
 
     return Response({'user': UserSerializer(user).data})
+
+
+@csrf_protect
+@never_cache
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def reset_password_step1(request):
+    if not check_captcha(request.data.get('captcha', '')):
+        return Response({'detail': 'Nieprawidłowy wynik captchy'}, status=400)
+
+    try:
+        user = User.objects.get_by_natural_key(
+            request.data.get('email', ''))
+    except User.DoesNotExist:
+        return Response(
+            {
+                'detail': 'Użytkownik nie istnieje',
+            }, status=404)
+
+    token = uuid.uuid4().hex
+    cache.set(f'reset_password:{token}', user.id, timeout=24 * 60 * 60)
+    link = request.build_absolute_uri('/').strip(
+        "/") + '/reset_password/' + token
+
+    template = loader.get_template('accounts/email_reset_password.html')
+    context = {
+        'first_name': user.first_name,
+        'link': link,
+    }
+    html = template.render(context, request)
+    user.email_user('Reset hasła w bibliotece', html, html_message=html)
+
+    return Response(status=204)
+
+
+@sensitive_variables()
+@csrf_protect
+@never_cache
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def reset_password_step2(request):
+    token = request.data.get("token", "")
+    userId = cache.get(f'reset_password:{token}')
+    if userId is None:
+        return Response(
+            {
+                'detail': 'Nieprawidłowy token',
+            }, status=400)
+
+    try:
+        user = User.objects.get(pk=userId)
+    except User.DoesNotExist:
+        return Response(
+            {
+                'detail': 'Nieprawidłowy token',
+            }, status=400)
+
+    user.set_password(request.data.get('password', ''))
+
+    try:
+        user.clean_fields()
+        user.clean()
+    except ValidationError as e:
+        return Response(
+            {
+                'detail': 'Dane użytkownika są błędne',
+                'validation': e
+            },
+            status=400)
+
+    user.save()
+    cache.delete(f'reset_password:{token}')
+
+    return Response(status=204)

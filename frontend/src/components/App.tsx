@@ -14,6 +14,8 @@ import {
   RegisterForm,
   ProfileView,
   ProfileForm,
+  ResetPasswordStep1,
+  ResetPasswordStep2,
 } from "routes/accounts"
 import { BookList, BookSearch } from "routes/books"
 import { LendingList } from "routes/lendings"
@@ -40,6 +42,8 @@ export default class App extends Component<IAppProps, {}> {
             <Route exact={true} path="/" component={Landing(BookSearch)} />
             <Route path="/login" component={Landing(LoginForm)} />
             <Route path="/register" component={Landing(RegisterForm)} />
+            <Route exact={true} path="/reset_password" component={Landing(ResetPasswordStep1)} />
+            <Route path="/reset_password/:token" component={Landing(ResetPasswordStep2)} />
             <Route path="/books" component={BookList} />
             {userStore.hasPermision(
               "books.view_own_lendings",

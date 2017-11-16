@@ -2,6 +2,8 @@ import ChildStore from "stores/ChildStore"
 import LoginFormStore from "./LoginFormStore"
 import RegisterFormStore from "./RegisterFormStore"
 import ProfileFormStore from "./ProfileFormStore"
+import ResetPasswordStep1Store from "./ResetPasswordStep1Store"
+import ResetPasswordStep2Store from "./ResetPasswordStep2Store"
 import { toJS, action, observable } from "mobx"
 import request from "utils/request"
 import logger from "utils/logger"
@@ -12,6 +14,8 @@ export default class UserStore extends ChildStore<IRootStore>
   public loginForm: ILoginFormStore = new LoginFormStore(this.rootStore, this)
   public registerForm: IRegisterFormStore = new RegisterFormStore(this.rootStore, this)
   public profileForm: IProfileFormStore = new ProfileFormStore(this.rootStore, this)
+  public resetPasswordStep1Form: IResetPasswordStep1Store = new ResetPasswordStep1Store(this.rootStore, this)
+  public resetPasswordStep2Form: IResetPasswordStep2Store = new ResetPasswordStep2Store(this.rootStore, this)
   @observable public user: IUser
 
   constructor(rootStore: IRootStore, parentStore: IRootStore) {
@@ -60,6 +64,30 @@ export default class UserStore extends ChildStore<IRootStore>
       }
       logger.error(err)
       throw new Error("Napotkano błąd. Spróbuj ponownie.")
+    }
+  }
+
+  public resetPasswordStep1 = async (data: IResetPasswordStep1Request) => {
+    try {
+      await request.post("accounts/reset_password_step1", data)
+    } catch (err) {
+      if (err.response && err.response.data.detail) {
+        throw new Error(err.response.data.detail)
+      }
+      logger.error(err)
+      throw new Error('Napotkano błąd. Spróbuj ponownie.')
+    }
+  }
+
+  public resetPasswordStep2 = async (data: IResetPasswordStep2Request) => {
+    try {
+      await request.post("accounts/reset_password_step2", data)
+    } catch (err) {
+      if (err.response && err.response.data.detail) {
+        throw new Error(err.response.data.detail)
+      }
+      logger.error(err)
+      throw new Error('Napotkano błąd. Spróbuj ponownie.')
     }
   }
 
