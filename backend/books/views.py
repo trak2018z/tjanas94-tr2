@@ -7,6 +7,7 @@ from django.db.models.functions import Coalesce
 from django.db import transaction
 from django_filters import rest_framework as filters
 from datetime import date
+import django_excel as excel
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .serializers import BookSerializer, LendingSerializer
@@ -185,3 +186,36 @@ class LendingUpdateView(APIView):
             lending.save()
 
         return Response(status=204)
+
+
+class LendingExportView(APIView):
+    permission_classes = (LendingManagerPermission, )
+
+    def get(self, request):
+        lendings = LendingFilter(
+            request.GET, queryset=Lending.objects.all()).qs
+        if not lendings:
+            return Response(status=204)
+
+        to_export = [[
+            'id książki',
+            'tytuł ksiązki',
+            'utworzone przez',
+            'status',
+            'data utworzenia',
+            'data modyfikacji',
+        ]]
+        for lending in lendings:
+            first_history_entry = lending.history.filter(
+                status=LendingHistory.RESERVED).first()
+            to_export.append([
+                lending.book.id,
+                lending.book.title,
+                first_history_entry.user.email,
+                LendingHistory.STATUSES_MAP[lending.last_change.status],
+                first_history_entry.created,
+                lending.last_change.created,
+            ])
+
+        return excel.make_response_from_array(
+            to_export, 'xlsx', file_name='lendings.xlsx')

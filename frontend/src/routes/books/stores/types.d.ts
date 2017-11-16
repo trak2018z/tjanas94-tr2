@@ -15,8 +15,8 @@ interface IBookQuery {
   title?: string
   author?: string
   available?: string
-  publication_year__gte?: number
-  publication_year__lte?: number
+  publication_year__gte?: string
+  publication_year__lte?: string
   page: number
 }
 

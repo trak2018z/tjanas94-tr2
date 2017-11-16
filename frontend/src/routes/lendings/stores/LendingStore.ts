@@ -1,5 +1,5 @@
 import ChildStore from "stores/ChildStore"
-import { toJS, runInAction, observable } from "mobx"
+import { toJS, runInAction, observable, computed } from "mobx"
 import qs from "qs"
 import history from "utils/history"
 import request from "utils/request"
@@ -26,6 +26,12 @@ export default class LendingStore extends ChildStore<IRootStore>
     5: "Anulowane",
   }
 
+  @computed
+  public get parameters() {
+    const { page, ...reqData } = this.query
+    return qs.stringify(reqData)
+  }
+
   public async fetchLendings(query: ILendingRequest = this.query) {
     try {
       runInAction(() => (this.query = query))
@@ -36,7 +42,7 @@ export default class LendingStore extends ChildStore<IRootStore>
         this.page = {
           count: response.data.count,
           last: Math.ceil(response.data.count / LendingStore.PAGE_SIZE) || 1,
-          current: this.query.page,
+          current: this.query.page!,
         }
       })
     } catch (err) {

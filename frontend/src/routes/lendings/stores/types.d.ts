@@ -23,19 +23,19 @@ interface ILending {
   book: ILendingBook
 }
 interface ILendingQuery {
-  status?: number
+  status?: string
   user?: string
   created__gte?: string
   created__lte?: string
-  page: number
+  page?: number
 }
 
 interface ILendingRequest {
-  status?: number
+  status?: string
   user?: string
   created__gte?: number
   created__lte?: number
-  page: number
+  page?: number
 }
 
 
@@ -45,6 +45,7 @@ interface ILendingStore extends IChildStore<IRootStore> {
   lending?: ILending
   query: ILendingRequest
   page: IPage
+  parameters: string
   lendingStatuses: any
 
   fetchLendings(query?: ILendingRequest): Promise<void>

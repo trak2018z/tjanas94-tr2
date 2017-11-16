@@ -5,6 +5,8 @@ django-redis
 uwsgi
 djangorestframework
 django-filter
+django-excel
+pyexcel-xlsx
 django-extensions
 bpython
 pygraphviz

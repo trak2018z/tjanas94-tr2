@@ -29,11 +29,22 @@ export default class BookSearchStore extends FormStore<IBookStore, IBookQuery>
 
   @action.bound
   public clear() {
-    this.data = this.parentStore.query
+    this.data = this.copyQuery(this.parentStore.query)
     this.error = {
       message: "",
       visible: false,
     }
     this.pending = false
+  }
+
+  private copyQuery(data: IBookQuery) {
+    return {
+      page: data.page,
+      title: data.title || "",
+      author: data.author || "",
+      publication_year__gte: data.publication_year__gte || "",
+      publication_year__lte: data.publication_year__lte || "",
+      available: data.available || "",
+    }
   }
 }

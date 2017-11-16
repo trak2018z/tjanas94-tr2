@@ -95,6 +95,18 @@ export default class LendingSearch extends Component<
               </button>
             </div>
           </div>
+          {userStore!.hasPermision("books.view_all_lendings") && (
+          <div className="field">
+            <div className="control">
+              <a
+                href={`/api/lendings/export?${lendingStore.parameters}`}
+                className="button is-primary is-fullwidth is-size-4"
+              >
+                Eksportuj
+              </a>
+            </div>
+          </div>
+          )}
         </form>
       </div>
     )

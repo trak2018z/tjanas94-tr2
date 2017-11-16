@@ -54,6 +54,7 @@ class LendingHistory(models.Model):
         (EXTENDED, 'przedłużone'),
         (RETURNED, 'zwrócone'),
         (CANCELLED, 'anulowane'), )
+    STATUSES_MAP = {k: v for k, v in STATUSES}
 
     status = models.PositiveSmallIntegerField('status', choices=STATUSES)
     user = models.ForeignKey(User, verbose_name='użytkownik')

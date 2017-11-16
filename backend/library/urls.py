@@ -21,7 +21,7 @@ from rest_framework import routers
 from accounts.views import profile_view, login_view, logout_view,\
     register_view, activate_view, edit_profile_view,\
     reset_password_step1, reset_password_step2
-from books.views import LendBookView, LendingUpdateView
+from books.views import LendBookView, LendingUpdateView, LendingExportView
 from books.views import BookViewSet, LendingViewSet
 
 admin.autodiscover()
@@ -41,6 +41,7 @@ urlpatterns = [
     url(r'^api/accounts/logout', logout_view),
     url(r'^api/accounts/register', register_view),
     url(r'^api/accounts/activate/(?P<token>\w+)', activate_view),
+    url(r'^api/lendings/export', LendingExportView.as_view()),
     url(r'^api/lendings/(?P<id>\d+)/update', LendingUpdateView.as_view()),
     url(r'^api/books/(?P<id>\d+)/lend', LendBookView.as_view()),
     url(r'^api/', include(router.urls)),
