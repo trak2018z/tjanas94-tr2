@@ -20,6 +20,7 @@ export default class MenuBar extends Component<IMenuBarProps, IMenuBarState> {
   }
 
   public toggleMenu = () => this.setState({ active: !this.state.active })
+  public closeMenu = () => this.setState({ active: false })
 
   public render() {
     const userStore = this.props.userStore!
@@ -30,13 +31,20 @@ export default class MenuBar extends Component<IMenuBarProps, IMenuBarState> {
             <Link to="/" className="navbar-item is-size-4" href="/">
               Biblioteka
             </Link>
-            <button className={`button navbar-burger ${styles.lightButton}`} onClick={this.toggleMenu}>
+            <button
+              className={`button navbar-burger ${styles.lightButton}`}
+              onClick={this.toggleMenu}
+            >
               <span />
               <span />
               <span />
             </button>
           </div>
-          <div id="navbarMenu" className={`navbar-menu ${this.state.active ? 'is-active' : ''}`}>
+          <div
+            id="navbarMenu"
+            className={`navbar-menu ${this.state.active ? "is-active" : ""}`}
+            onClick={this.closeMenu}
+          >
             <div className="navbar-end">
               <Link to="/books" className="navbar-item">
                 Książki
