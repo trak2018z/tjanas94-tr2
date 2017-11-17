@@ -1,5 +1,5 @@
 import React, { Component } from "react"
-import { Route, Link } from "react-router-dom"
+import { Route, Link, Switch, Redirect } from "react-router-dom"
 import { observer, inject } from "mobx-react"
 import styles from "components/style"
 import BookSearch from "./BookSearch"
@@ -7,6 +7,7 @@ import BookView from "./BookView"
 import BookEdit from "./BookEdit"
 import Paginator from "components/Paginator"
 import EmptyCard from "components/EmptyCard"
+import AuthRoute from "components/AuthRoute"
 
 interface IBookListProps {
   bookStore?: IBookStore
@@ -35,7 +36,7 @@ export default class BookList extends Component<IBookListProps, {}> {
             />
             {userStore.hasPermision("books.add_book") && (
               <Link className="is-size-4 has-text-centered" to="/books/add">
-                <div className={`card ${styles.card} ${styles.cardButton}`}>
+                <div className={`card ${styles.card} ${styles.lightButton}`}>
                   <div className="card-content">Dodaj książkę</div>
                 </div>
               </Link>
@@ -54,14 +55,26 @@ export default class BookList extends Component<IBookListProps, {}> {
               <EmptyCard />
             )}
           </div>
-          <div className="column is-5 is-offset-1">
-            {userStore.hasPermision("books.add_book") && (
-              <Route path="/books/add" component={BookEdit} />
-            )}
-            {userStore.hasPermision("books.change_book") && (
-              <Route path="/books/:id/edit" component={BookEdit} />
-            )}
-            <Route path="/books/:id/view" component={BookView} />
+          <div className="column is-5 is-offset-1-desktop" id="bookView">
+            <Switch>
+              <Route exact={true} path="/books" />
+              <AuthRoute
+                permissions={["books.add_book"]}
+                redirect="/books"
+                exact={true}
+                path="/books/add"
+                component={BookEdit}
+              />
+              <AuthRoute
+                permissions={["books.change_book"]}
+                redirect="/books"
+                exact={true}
+                path="/books/:id/edit"
+                component={BookEdit}
+              />
+              <Route exact={true} path="/books/:id/view" component={BookView} />
+              <Redirect to="/books" />
+            </Switch>
             <BookSearch />
           </div>
         </div>
@@ -85,7 +98,7 @@ const BookCard = observer(
         {book.author && <p>Autor: {book.author}</p>}
         {book.publication_year && <p>Rok wydania: {book.publication_year}</p>}
         {(book.available && <p>Dostępne</p>) || <p>Niedostępne</p>}
-        <div className="field is-grouped is-grouped-right">
+        <div className="field is-grouped is-grouped-right is-grouped-multiline">
           <div className="control">
             <Link className="button is-link" to={`/books/${book.id}/view`}>
               Więcej informacji

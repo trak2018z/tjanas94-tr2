@@ -7,25 +7,8 @@ export default class LendingSearchStore extends FormStore<
   ILendingQuery
 > implements ILendingSearchStore {
   public async sendRequest() {
-    try {
-      runInAction(() => {
-        this.pending = true
-        this.data.page = 1
-      })
-      await this.parentStore.fetchLendings(
-        this.convertToRequest(toJS(this.data))
-      )
-      this.clear()
-    } catch (err) {
-      runInAction(
-        () =>
-          (this.error = {
-            message: err.message,
-            visible: true,
-          })
-      )
-    }
-    runInAction(() => (this.pending = false))
+    runInAction(() => (this.data.page = 1))
+    await this.parentStore.fetchLendings(this.convertToRequest(toJS(this.data)))
   }
 
   @action.bound

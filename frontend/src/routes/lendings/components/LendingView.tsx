@@ -1,6 +1,7 @@
 import React, { Component } from "react"
 import { observer, inject } from "mobx-react"
 import moment from "moment"
+import scroll from "utils/scroll"
 
 interface ILendingViewProps {
   lendingStore?: ILendingStore
@@ -13,11 +14,13 @@ interface ILendingViewProps {
 export default class LendingView extends Component<ILendingViewProps, {}> {
   public componentDidMount() {
     this.props.lendingStore!.getLending(this.props.match.params.id)
+    scroll(document.getElementById('lendingView')!)
   }
 
   public componentWillReceiveProps(nextProps: ILendingViewProps) {
     if (nextProps.match.params.id !== this.props.match.params.id) {
       this.props.lendingStore!.getLending(nextProps.match.params.id)
+      scroll(document.getElementById('lendingView')!)
     }
   }
 

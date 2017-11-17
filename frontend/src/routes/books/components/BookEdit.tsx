@@ -1,8 +1,8 @@
 import React, { Component } from "react"
 import { Link } from "react-router-dom"
-import { toJS, runInAction } from "mobx"
 import { observer, inject } from "mobx-react"
 import Notification from "components/Notification"
+import scroll from "utils/scroll"
 
 interface IBookEditProps {
   bookEditForm?: IBookEditStore
@@ -13,12 +13,14 @@ interface IBookEditProps {
 @observer
 export default class BookEdit extends Component<IBookEditProps, {}> {
   public componentDidMount() {
-    this.fetchBook(this.props.match.params.id)
+    this.props.bookEditForm!.fetchBook(this.props.match.params.id)
+    scroll(document.getElementById('bookView')!)
   }
 
   public componentWillReceiveProps(nextProps: IBookEditProps) {
     if (nextProps.match.params.id !== this.props.match.params.id) {
-      this.fetchBook(nextProps.match.params.id)
+      this.props.bookEditForm!.fetchBook(nextProps.match.params.id)
+      scroll(document.getElementById('bookView')!)
     }
   }
 
@@ -94,7 +96,7 @@ export default class BookEdit extends Component<IBookEditProps, {}> {
               />
             </div>
           </div>
-          <div className="field is-grouped">
+          <div className="field is-grouped is-grouped-multiline">
             <div className="control">
               <button
                 className="button is-link"
@@ -119,17 +121,5 @@ export default class BookEdit extends Component<IBookEditProps, {}> {
         </form>
       </div>
     )
-  }
-
-  private async fetchBook(id: number) {
-    this.props.bookEditForm!.clear()
-    if (!id) {
-      return
-    }
-    const bookStore = this.props.bookEditForm!.parentStore
-    await bookStore.getBook(id)
-    if (bookStore.book) {
-      runInAction(() => (this.props.bookEditForm!.data = toJS(bookStore.book!)))
-    }
   }
 }

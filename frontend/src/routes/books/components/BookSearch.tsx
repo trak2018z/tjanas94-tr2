@@ -42,9 +42,7 @@ export default class BookSearch extends Component<IBookSearchProps, {}> {
             </div>
           </div>
           <div className="field">
-            <label className="label">Rok wydania</label>
-          </div>
-          <div className="field is-grouped">
+            <label className="label">Rok wydania po</label>
             <div className="control">
               <input
                 className="input"
@@ -53,9 +51,9 @@ export default class BookSearch extends Component<IBookSearchProps, {}> {
                 onChange={bookSearchForm.updateField("publication_year__gte")}
               />
             </div>
-            <div className="control">
-            &mdash;
-            </div>
+          </div>
+          <div className="field">
+            <label className="label">Rok wydania przed</label>
             <div className="control">
               <input
                 className="input"

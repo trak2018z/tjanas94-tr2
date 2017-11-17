@@ -1,9 +1,9 @@
 import ChildStore from "stores/ChildStore"
-import { toJS, runInAction, observable } from "mobx"
+import { runInAction, observable, action } from "mobx"
 import qs from "qs"
 import history from "utils/history"
 import request from "utils/request"
-import logger from "utils/logger"
+import ErrorHandler from "utils/ErrorHandler"
 import BookSearchStore from "./BookSearchStore"
 import BookEditStore from "./BookEditStore"
 
@@ -20,10 +20,10 @@ export default class BookStore extends ChildStore<IRootStore>
   )
   public bookEditForm: IBookEditStore = new BookEditStore(this.rootStore, this)
 
-  public async fetchBooks(query: IBookQuery = this.query) {
+  public fetchBooks = async (query: IBookQuery = this.query) => {
     try {
       runInAction(() => (this.query = query))
-      const reqData = qs.stringify(toJS(this.query))
+      const reqData = qs.stringify(this.query)
       const response = await request.get("books?" + reqData)
       runInAction(() => {
         this.books = response.data.results
@@ -34,11 +34,11 @@ export default class BookStore extends ChildStore<IRootStore>
         }
       })
     } catch (err) {
-      logger.error(err)
+      ErrorHandler.globalError(err)
     }
   }
 
-  public async saveBook(book: IBook) {
+  public saveBook = async (book: IBook) => {
     try {
       const anyBook: any = book
       for (const [key, value] of Object.entries(anyBook)) {
@@ -52,11 +52,7 @@ export default class BookStore extends ChildStore<IRootStore>
       await this.fetchBooks()
       return response.data
     } catch (err) {
-      if (err.response && err.response.data.detail) {
-        throw new Error(err.response.data.detail)
-      }
-      logger.error(err)
-      throw new Error("Napotkano błąd. Spróbuj ponownie.")
+      ErrorHandler.formError(err)
     }
   }
 
@@ -69,7 +65,7 @@ export default class BookStore extends ChildStore<IRootStore>
         this.rootStore.messageStore.showMessage("Usunięto książkę")
       }
     } catch (err) {
-      logger.error(err)
+      ErrorHandler.globalError(err)
     }
   }
 
@@ -81,11 +77,11 @@ export default class BookStore extends ChildStore<IRootStore>
       runInAction(() => (this.query.page = this.page.current = page))
       await this.fetchBooks()
     } catch (err) {
-      logger.error(err)
+      ErrorHandler.globalError(err)
     }
   }
 
-  public async getBook(id: number) {
+  public getBook = async (id: number) => {
     try {
       const response = await request.get("books/" + id)
       for (const [key, value] of Object.entries(response.data)) {
@@ -95,11 +91,13 @@ export default class BookStore extends ChildStore<IRootStore>
       }
       runInAction(() => (this.book = response.data))
     } catch (err) {
+      history.push("/books")
       runInAction(() => (this.book = undefined))
-      logger.error(err)
+      ErrorHandler.globalError(err)
     }
   }
 
+  @action.bound
   public clear() {
     this.books = []
     this.book = undefined

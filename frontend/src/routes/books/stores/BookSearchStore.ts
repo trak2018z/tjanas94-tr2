@@ -5,26 +5,11 @@ import history from "utils/history"
 export default class BookSearchStore extends FormStore<IBookStore, IBookQuery>
   implements IBookSearchStore {
   public async sendRequest() {
-    try {
-      runInAction(() => {
-        this.pending = true
-        this.data.page = 1
-      })
-      await this.parentStore.fetchBooks(toJS(this.data))
-      if (!history.location.pathname.startsWith('/books')) {
-        history.push("/books")
-      }
-      this.clear()
-    } catch (err) {
-      runInAction(
-        () =>
-          (this.error = {
-            message: err.message,
-            visible: true,
-          })
-      )
+    runInAction(() => (this.data.page = 1))
+    await this.parentStore.fetchBooks(toJS(this.data))
+    if (!history.location.pathname.startsWith("/books")) {
+      history.push("/books")
     }
-    runInAction(() => (this.pending = false))
   }
 
   @action.bound

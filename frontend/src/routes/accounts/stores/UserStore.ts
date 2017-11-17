@@ -6,8 +6,8 @@ import ResetPasswordStep1Store from "./ResetPasswordStep1Store"
 import ResetPasswordStep2Store from "./ResetPasswordStep2Store"
 import { toJS, action, observable } from "mobx"
 import request from "utils/request"
-import logger from "utils/logger"
 import history from "utils/history"
+import ErrorHandler from "utils/ErrorHandler"
 
 export default class UserStore extends ChildStore<IRootStore>
   implements IUserStore {
@@ -33,11 +33,7 @@ export default class UserStore extends ChildStore<IRootStore>
       this.setUser(this.getLoggedUser(response.data.user))
       this.cacheUser()
     } catch (err) {
-      if (err.response && err.response.data.detail) {
-        throw new Error(err.response.data.detail)
-      }
-      logger.error(err)
-      throw new Error("Napotkano błąd. Spróbuj ponownie.")
+      ErrorHandler.formError(err)
     }
   }
 
@@ -45,11 +41,7 @@ export default class UserStore extends ChildStore<IRootStore>
     try {
       await request.post("accounts/register", data)
     } catch (err) {
-      if (err.response && err.response.data.detail) {
-        throw new Error(err.response.data.detail)
-      }
-      logger.error(err)
-      throw new Error('Napotkano błąd. Spróbuj ponownie.')
+      ErrorHandler.formError(err)
     }
   }
 
@@ -59,11 +51,7 @@ export default class UserStore extends ChildStore<IRootStore>
       this.setUser(this.getLoggedUser(response.data.user))
       this.cacheUser()
     } catch (err) {
-      if (err.response && err.response.data.detail) {
-        throw new Error(err.response.data.detail)
-      }
-      logger.error(err)
-      throw new Error("Napotkano błąd. Spróbuj ponownie.")
+      ErrorHandler.formError(err)
     }
   }
 
@@ -71,11 +59,7 @@ export default class UserStore extends ChildStore<IRootStore>
     try {
       await request.post("accounts/reset_password_step1", data)
     } catch (err) {
-      if (err.response && err.response.data.detail) {
-        throw new Error(err.response.data.detail)
-      }
-      logger.error(err)
-      throw new Error('Napotkano błąd. Spróbuj ponownie.')
+      ErrorHandler.formError(err)
     }
   }
 
@@ -83,28 +67,24 @@ export default class UserStore extends ChildStore<IRootStore>
     try {
       await request.post("accounts/reset_password_step2", data)
     } catch (err) {
-      if (err.response && err.response.data.detail) {
-        throw new Error(err.response.data.detail)
-      }
-      logger.error(err)
-      throw new Error('Napotkano błąd. Spróbuj ponownie.')
+      ErrorHandler.formError(err)
     }
   }
 
   public logout = async () => {
     try {
       await request.post("accounts/logout")
+      this.setUser(this.getDefaultUser())
+      this.cacheUser()
       this.rootStore.clear()
-      history.push("/")
       this.rootStore.messageStore.showMessage("Wylogowano pomyślnie")
+      history.push("/")
     } catch (err) {
-      logger.error(err)
+      ErrorHandler.globalError(err)
     }
   }
 
   public clear() {
-    this.setUser(this.getDefaultUser())
-    this.cacheUser()
     this.clearChildStores()
   }
 
@@ -128,7 +108,7 @@ export default class UserStore extends ChildStore<IRootStore>
         this.setUser(this.getDefaultUser())
       }
     } catch (err) {
-      logger.error(err)
+      ErrorHandler.globalError(err)
     }
   }
 

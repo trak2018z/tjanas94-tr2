@@ -98,7 +98,6 @@ export default function getBaseConfiguration(prod: boolean) {
               loader: "thread-loader",
               options: threadOptions,
             },
-            "react-hot-loader/webpack",
             "babel-loader",
             {
               loader: "ts-loader",

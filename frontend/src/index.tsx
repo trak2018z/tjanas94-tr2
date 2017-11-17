@@ -3,7 +3,6 @@ import React from "react"
 import { render } from "react-dom"
 import { Provider } from "mobx-react"
 import { useStrict } from "mobx"
-import { AppContainer } from "react-hot-loader"
 import RedBox from "redbox-react"
 
 import "styles"
@@ -18,11 +17,9 @@ const appElement = document.getElementById("app")
 function renderApp() {
   try {
     render(
-      <AppContainer>
-        <Provider {...stores}>
-            <App />
-        </Provider>
-      </AppContainer>,
+      <Provider {...stores}>
+        <App />
+      </Provider>,
       appElement
     )
   } catch (err) {

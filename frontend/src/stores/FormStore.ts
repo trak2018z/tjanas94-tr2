@@ -1,5 +1,5 @@
 import ChildStore from "stores/ChildStore"
-import { action, observable } from "mobx"
+import { action, observable, runInAction } from "mobx"
 import moment from "moment"
 
 export default abstract class FormStore<T extends IStore, U> extends ChildStore<
@@ -27,9 +27,21 @@ export default abstract class FormStore<T extends IStore, U> extends ChildStore<
     })
   }
 
-  public submit = (event: any) => {
+  public submit = async (event: any) => {
     event.preventDefault()
-    this.sendRequest()
+    try {
+      runInAction(() => (this.pending = true))
+      await this.sendRequest()
+    } catch (err) {
+      runInAction(
+        () =>
+          (this.error = {
+            message: err.message,
+            visible: true,
+          })
+      )
+    }
+    runInAction(() => (this.pending = false))
   }
 
   public abstract sendRequest(): Promise<void>

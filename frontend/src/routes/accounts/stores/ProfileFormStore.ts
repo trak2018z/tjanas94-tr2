@@ -1,5 +1,5 @@
 import FormStore from "stores/FormStore"
-import { toJS, action, runInAction, observable } from "mobx"
+import { toJS, action, observable } from "mobx"
 import history from "utils/history"
 
 export default class ProfileFormStore extends FormStore<
@@ -9,25 +9,12 @@ export default class ProfileFormStore extends FormStore<
   @observable public validation: IPasswordValidation
 
   public async sendRequest() {
-    try {
-      if (!this.isValid()) {
-        return
-      }
-      runInAction(() => (this.pending = true))
-      await this.parentStore.updateProfile(this.getRequestData())
-      this.rootStore.messageStore.showMessage("Zaktualizowano profil")
-      history.push("/profile")
-      this.clear()
-    } catch (err) {
-      runInAction(
-        () =>
-          (this.error = {
-            message: err.message,
-            visible: true,
-          })
-      )
+    if (!this.isValid()) {
+      return
     }
-    runInAction(() => (this.pending = false))
+    await this.parentStore.updateProfile(this.getRequestData())
+    this.rootStore.messageStore.showMessage("Zaktualizowano profil")
+    history.push("/profile")
   }
 
   @action.bound

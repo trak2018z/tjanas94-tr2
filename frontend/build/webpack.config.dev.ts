@@ -14,7 +14,7 @@ const baseConf = getBaseConfiguration(false)
 const devConf: webpack.Configuration = {
   ...baseConf,
   entry: {
-    app: ["react-hot-loader/patch", "./src/index.tsx"],
+    app: "./src/index.tsx",
   },
   output: {
     path: path.resolve(config.outputDev),
@@ -60,6 +60,7 @@ const devConf: webpack.Configuration = {
         publicPath: config.assets,
       },
     ]),
+    new webpack.NamedModulesPlugin(),
     new webpack.HotModuleReplacementPlugin(),
     new webpack.DllReferencePlugin({
       context: path.resolve("."),

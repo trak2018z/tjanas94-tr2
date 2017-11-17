@@ -1,9 +1,9 @@
 import ChildStore from "stores/ChildStore"
-import { toJS, runInAction, observable, computed } from "mobx"
+import { runInAction, observable, action, computed } from "mobx"
 import qs from "qs"
 import history from "utils/history"
 import request from "utils/request"
-import logger from "utils/logger"
+import ErrorHandler from "utils/ErrorHandler"
 import LendingSearchStore from "./LendingSearchStore"
 
 export default class LendingStore extends ChildStore<IRootStore>
@@ -32,10 +32,10 @@ export default class LendingStore extends ChildStore<IRootStore>
     return qs.stringify(reqData)
   }
 
-  public async fetchLendings(query: ILendingRequest = this.query) {
+  public fetchLendings = async (query: ILendingRequest = this.query) => {
     try {
       runInAction(() => (this.query = query))
-      const reqData = qs.stringify(toJS(this.query))
+      const reqData = qs.stringify(this.query)
       const response = await request.get("lendings?" + reqData)
       runInAction(() => {
         this.lendings = response.data.results
@@ -46,7 +46,7 @@ export default class LendingStore extends ChildStore<IRootStore>
         }
       })
     } catch (err) {
-      logger.error(err)
+      ErrorHandler.globalError(err)
     }
   }
 
@@ -57,11 +57,7 @@ export default class LendingStore extends ChildStore<IRootStore>
         history.push("/books")
         this.rootStore.messageStore.showMessage("Zarezerwowano książkę")
       } catch (err) {
-        if (err.response && err.response.data.detail) {
-          this.rootStore.messageStore.showMessage(err.response.data.detail)
-        } else {
-          logger.error(err)
-        }
+        ErrorHandler.globalError(err)
       }
       await this.rootStore.bookStore.fetchBooks()
     }
@@ -76,11 +72,7 @@ export default class LendingStore extends ChildStore<IRootStore>
           "Zaktualizowano status wypożyczenia"
         )
       } catch (err) {
-        if (err.response && err.response.data.detail) {
-          this.rootStore.messageStore.showMessage(err.response.data.detail)
-        } else {
-          logger.error(err)
-        }
+        ErrorHandler.globalError(err)
       }
       await this.fetchLendings()
     }
@@ -94,11 +86,11 @@ export default class LendingStore extends ChildStore<IRootStore>
       runInAction(() => (this.query.page = this.page.current = page))
       await this.fetchLendings()
     } catch (err) {
-      logger.error(err)
+      ErrorHandler.globalError(err)
     }
   }
 
-  public async getLending(id: number) {
+  public getLending = async (id: number) => {
     try {
       const response = await request.get("lendings/" + id)
       for (const [key, value] of Object.entries(response.data)) {
@@ -108,11 +100,13 @@ export default class LendingStore extends ChildStore<IRootStore>
       }
       runInAction(() => (this.lending = response.data))
     } catch (err) {
+      history.push('/lendings')
       runInAction(() => (this.lending = undefined))
-      logger.error(err)
+      ErrorHandler.globalError(err)
     }
   }
 
+  @action.bound
   public clear() {
     this.lendings = []
     this.lending = undefined

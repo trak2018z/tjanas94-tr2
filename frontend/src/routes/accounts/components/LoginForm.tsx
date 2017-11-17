@@ -3,6 +3,7 @@ import { Link } from "react-router-dom"
 import { observer, inject } from "mobx-react"
 import Notification from "components/Notification"
 import config from "config"
+import styles from "components/style"
 
 interface ILoginProps {
   loginForm?: ILoginFormStore
@@ -83,7 +84,7 @@ export default class LoginForm extends Component<ILoginProps, {}> {
             <div className="control">
               <a
                 href={`mailto:${config.adminEmail}`}
-                className="button is-text"
+                className={`button is-text is-hidden-touch ${styles.buttonWrap}`}
               >
                 Napotkałeś na problem? Skontaktuj się z administratorem.
               </a>

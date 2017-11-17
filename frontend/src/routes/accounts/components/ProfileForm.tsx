@@ -133,7 +133,7 @@ export default class ProfileForm extends Component<IProfileProps, {}> {
               )}
             </div>
           )}
-          <div className="field is-grouped">
+          <div className="field is-grouped is-grouped-multiline">
             <div className="control">
               <button className="button is-link" disabled={profileForm.pending}>
                 Zapisz

@@ -7,3 +7,7 @@ if (config.debug) {
 }
 
 export default store
+
+if (module.hot) {
+  module.hot.accept()
+}

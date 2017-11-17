@@ -1,14 +1,12 @@
-@import '~styles/config';
+@import "~styles/config";
 
 .card {
   margin: 10px 0;
   border-radius: 5px;
 }
 
-.cardButton {
-  &:hover {
-    background: $grey-lighter;
-  }
+.lightButton:hover {
+  background: $grey-lighter;
 }
 
 .hero {
@@ -32,4 +30,9 @@
   a:hover {
     background-color: $blue;
   }
+}
+
+.buttonWrap {
+  white-space: normal;
+  height: auto;
 }

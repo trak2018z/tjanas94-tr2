@@ -27,7 +27,7 @@ interface IFormStore<T extends IStore, U> extends IChildStore<T> {
   error: IMessage
 
   updateField(field: keyof U): (event: any) => void
-  submit(event: any): void
+  submit(event: any): Promise<void>
   sendRequest(): Promise<void>
 }
 

@@ -5,32 +5,20 @@ import history from "utils/history"
 export default class BookEditStore extends FormStore<IBookStore, IBook>
   implements IBookEditStore {
   public async sendRequest() {
-    try {
-      runInAction(() => this.pending = true)
-      const book = await this.parentStore.saveBook(toJS(this.data))
-      history.push(`/books/${book.id}/view`)
-      this.clear()
-    } catch (err) {
-      runInAction(
-        () =>
-          (this.error = {
-            message: err.message,
-            visible: true,
-          })
-      )
-    }
-    runInAction(() => (this.pending = false))
+    const book = await this.parentStore.saveBook(toJS(this.data))
+    this.rootStore.messageStore.showMessage("Zapisano książkę")
+    history.push(`/books/${book.id}/view`)
   }
 
   @action.bound
   public clear() {
     this.data = {
       id: undefined,
-      title: '',
-      author: '',
+      title: "",
+      author: "",
       publication_year: new Date().getFullYear(),
-      publication_place: '',
-      publishing_house: '',
+      publication_place: "",
+      publishing_house: "",
       count: 0,
     }
     this.error = {
@@ -38,5 +26,16 @@ export default class BookEditStore extends FormStore<IBookStore, IBook>
       visible: false,
     }
     this.pending = false
+  }
+
+  public async fetchBook(id?: number) {
+    this.clear()
+    if (!id) {
+      return
+    }
+    await this.parentStore.getBook(id)
+    if (this.parentStore.book) {
+      runInAction(() => (this.data = toJS(this.parentStore.book!)))
+    }
   }
 }

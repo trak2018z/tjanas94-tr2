@@ -1,5 +1,5 @@
 import FormStore from "stores/FormStore"
-import { toJS, action, runInAction, observable } from "mobx"
+import { toJS, action, observable } from "mobx"
 import history from "utils/history"
 
 export default class ResetPasswordStep2Store extends FormStore<
@@ -9,25 +9,13 @@ export default class ResetPasswordStep2Store extends FormStore<
   @observable public validation: IPasswordValidation
 
   public async sendRequest() {
-    try {
-      if (!this.isValid()) {
-        return
-      }
-      runInAction(() => (this.pending = true))
-      await this.parentStore.resetPasswordStep2(this.getRequestData())
-      this.rootStore.messageStore.showMessage("Zmieniono hasło")
-      history.push("/login")
-      this.clear()
-    } catch (err) {
-      runInAction(
-        () =>
-          (this.error = {
-            message: err.message,
-            visible: true,
-          })
-      )
+    if (!this.isValid()) {
+      return
     }
-    runInAction(() => (this.pending = false))
+    await this.parentStore.resetPasswordStep2(this.getRequestData())
+    this.rootStore.messageStore.showMessage("Zmieniono hasło")
+    history.push("/login")
+    this.clear()
   }
 
   @action.bound

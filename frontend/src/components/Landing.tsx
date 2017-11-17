@@ -10,7 +10,7 @@ const Landing = (Form: any) => observer(props => (
           Projekt wykonany w ramach przedmiotu Aplikacje internetowe.
         </h2>
       </div>
-      <div className="column is-5 is-offset-1">
+      <div className="column is-5 is-offset-1-desktop">
         <Form {...props} />
       </div>
     </div>

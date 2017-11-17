@@ -11,10 +11,7 @@ interface ILendingSearchProps {
 
 @inject("lendingSearchForm", "lendingStore", "userStore")
 @observer
-export default class LendingSearch extends Component<
-  ILendingSearchProps,
-  {}
-> {
+export default class LendingSearch extends Component<ILendingSearchProps, {}> {
   public componentDidMount() {
     this.props.lendingSearchForm!.clear()
   }
@@ -42,9 +39,7 @@ export default class LendingSearch extends Component<
             </div>
           )}
           <div className="field">
-            <label className="label">Data rezerwacji</label>
-          </div>
-          <div className="field is-grouped">
+            <label className="label">Data rezerwacji po</label>
             <div className="control">
               <input
                 className="input"
@@ -54,7 +49,9 @@ export default class LendingSearch extends Component<
                 onChange={lendingSearchForm.updateField("created__gte")}
               />
             </div>
-            <div className="control">&mdash;</div>
+          </div>
+          <div className="field">
+            <label className="label">Data rezerwacji przed</label>
             <div className="control">
               <input
                 className="input"
@@ -96,16 +93,16 @@ export default class LendingSearch extends Component<
             </div>
           </div>
           {userStore!.hasPermision("books.view_all_lendings") && (
-          <div className="field">
-            <div className="control">
-              <a
-                href={`/api/lendings/export?${lendingStore.parameters}`}
-                className="button is-primary is-fullwidth is-size-4"
-              >
-                Eksportuj
-              </a>
+            <div className="field">
+              <div className="control">
+                <a
+                  href={`/api/lendings/export?${lendingStore.parameters}`}
+                  className="button is-primary is-fullwidth is-size-4"
+                >
+                  Eksportuj
+                </a>
+              </div>
             </div>
-          </div>
           )}
         </form>
       </div>

@@ -10,33 +10,21 @@ export default class RegisterFormStore extends FormStore<
   @observable public captchaId?: number
 
   public async sendRequest() {
-    try {
-      if (this.captchaId != null) {
-        runInAction(
-          () => (this.data.captcha = grecaptcha.getResponse(this.captchaId))
-        )
-      }
-      if (!this.isValid()) {
-        return
-      }
-      runInAction(() => (this.pending = true))
-      grecaptcha.reset(this.captchaId)
-      await this.parentStore.register(this.getRequestData())
-      this.rootStore.messageStore.showMessage(
-        "Email z linkiem aktywacyjnym został wysłany na podany adres"
-      )
-      history.push("/login")
-      this.clear()
-    } catch (err) {
+    if (this.captchaId != null) {
       runInAction(
-        () =>
-          (this.error = {
-            message: err.message,
-            visible: true,
-          })
+        () => (this.data.captcha = grecaptcha.getResponse(this.captchaId))
       )
     }
-    runInAction(() => (this.pending = false))
+    if (!this.isValid()) {
+      return
+    }
+    grecaptcha.reset(this.captchaId)
+    await this.parentStore.register(this.getRequestData())
+    this.rootStore.messageStore.showMessage(
+      "Email z linkiem aktywacyjnym został wysłany na podany adres"
+    )
+    history.push("/login")
+    this.clear()
   }
 
   @action.bound

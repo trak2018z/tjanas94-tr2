@@ -36,5 +36,8 @@ interface IBookStore extends IChildStore<IRootStore> {
   getBook(id: number): Promise<void>
 }
 
+interface IBookEditStore extends IFormStore<IBookStore, IBook> {
+  fetchBook(id?: number): Promise<void>
+}
+
 type IBookSearchStore = IFormStore<IBookStore, IBookQuery>
-type IBookEditStore = IFormStore<IBookStore, IBook>

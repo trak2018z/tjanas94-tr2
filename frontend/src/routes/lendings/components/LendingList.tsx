@@ -1,5 +1,5 @@
 import React, { Component } from "react"
-import { Route, Link } from "react-router-dom"
+import { Route, Link, Switch, Redirect } from "react-router-dom"
 import { observer, inject } from "mobx-react"
 import styles from "components/style"
 import LendingSearch from "./LendingSearch"
@@ -44,8 +44,16 @@ export default class LendingList extends Component<ILendingListProps, {}> {
               <EmptyCard />
             )}
           </div>
-          <div className="column is-5 is-offset-1">
-            <Route path="/lendings/:id/view" component={LendingView} />
+          <div className="column is-5 is-offset-1-desktop" id="lendingView">
+            <Switch>
+              <Route exact={true} path="/lendings" />
+              <Route
+                exact={true}
+                path="/lendings/:id/view"
+                component={LendingView}
+              />
+              <Redirect to="/lendings" />
+            </Switch>
             <LendingSearch />
           </div>
         </div>
@@ -78,7 +86,7 @@ const LendingCard = observer(
           Ostatnia aktualizacja:{" "}
           {moment(lending.last_change.created).format("YYYY-MM-DD HH:mm")}
         </p>
-        <div className="field is-grouped is-grouped-right">
+        <div className="field is-grouped is-grouped-right is-grouped-multiline">
           <div className="control">
             <Link
               className="button is-link"
