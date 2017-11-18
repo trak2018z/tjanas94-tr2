@@ -9,6 +9,11 @@ interface IPage {
   current: number
 }
 
+interface IListResponse<T> {
+  count: number
+  results: T[]
+}
+
 
 interface IStore {
   getChildStores(): any

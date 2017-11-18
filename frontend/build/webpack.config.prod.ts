@@ -2,6 +2,7 @@ import * as webpack from "webpack"
 import * as path from "path"
 import getBaseConfiguration from "./webpack.config.base"
 import config from "./config"
+// import { BundleAnalyzerPlugin } from "webpack-bundle-analyzer"
 
 const CleanWebpackPlugin = require("clean-webpack-plugin")
 const UglifyJSPlugin = require("uglifyjs-webpack-plugin")
@@ -29,7 +30,9 @@ const prodConf: webpack.Configuration = {
         root: path.resolve("."),
       }
     ),
+    new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
     new webpack.HashedModuleIdsPlugin(),
+    // new BundleAnalyzerPlugin(),
     new webpack.optimize.CommonsChunkPlugin({
       names: ["vendor", "runtime"],
       minChunks: Infinity,

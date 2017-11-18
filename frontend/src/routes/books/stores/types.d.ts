@@ -12,11 +12,11 @@ interface IBook {
 }
 
 interface IBookQuery {
-  title?: string
-  author?: string
-  available?: string
-  publication_year__gte?: string
-  publication_year__lte?: string
+  title: string
+  author: string
+  available: string
+  publication_year__gte: string
+  publication_year__lte: string
   page: number
 }
 

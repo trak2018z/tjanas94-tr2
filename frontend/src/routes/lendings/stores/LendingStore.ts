@@ -1,8 +1,9 @@
 import ChildStore from "stores/ChildStore"
-import { runInAction, observable, action, computed } from "mobx"
+import { toJS, runInAction, observable, action, computed } from "mobx"
 import qs from "qs"
 import history from "utils/history"
 import request from "utils/request"
+import Cache from "utils/Cache"
 import ErrorHandler from "utils/ErrorHandler"
 import LendingSearchStore from "./LendingSearchStore"
 
@@ -33,20 +34,20 @@ export default class LendingStore extends ChildStore<IRootStore>
   }
 
   public fetchLendings = async (query: ILendingRequest = this.query) => {
+    const cached = (await Cache.get("lending:list", query)) as
+      | IListResponse<ILending>
+      | undefined
     try {
       runInAction(() => (this.query = query))
       const reqData = qs.stringify(this.query)
       const response = await request.get("lendings?" + reqData)
-      runInAction(() => {
-        this.lendings = response.data.results
-        this.page = {
-          count: response.data.count,
-          last: Math.ceil(response.data.count / LendingStore.PAGE_SIZE) || 1,
-          current: this.query.page!,
-        }
-      })
+      Cache.save("lending:list", query, response.data)
+      this.updateList(response.data)
     } catch (err) {
-      ErrorHandler.globalError(err)
+      if (cached) {
+        this.updateList(cached)
+      }
+      ErrorHandler.globalError(err, !!cached)
     }
   }
 
@@ -79,20 +80,17 @@ export default class LendingStore extends ChildStore<IRootStore>
   }
 
   public changePage = (page: number) => async () => {
-    try {
-      if (page < 1 || page > this.page.last) {
-        return
-      }
-      runInAction(() => (this.query.page = this.page.current = page))
-      await this.fetchLendings()
-    } catch (err) {
-      ErrorHandler.globalError(err)
+    if (page < 1 || page > this.page.last) {
+      return
     }
+    runInAction(() => (this.query.page = this.page.current = page))
+    await this.fetchLendings()
   }
 
   public getLending = async (id: number) => {
+    const cached = (await Cache.get("lending:view", id)) as ILending | undefined
     try {
-      if(this.getLendingFromList(id)) {
+      if (this.getLendingFromList(id)) {
         return
       }
       const response = await request.get("lendings/" + id)
@@ -101,11 +99,16 @@ export default class LendingStore extends ChildStore<IRootStore>
           response.data[key] = ""
         }
       }
+      Cache.save("lending:view", id, response.data)
       runInAction(() => (this.lending = response.data))
     } catch (err) {
-      history.push('/lendings')
-      runInAction(() => (this.lending = undefined))
-      ErrorHandler.globalError(err)
+      if (cached) {
+        runInAction(() => (this.lending = cached))
+      } else {
+        history.push("/lendings")
+        runInAction(() => (this.lending = undefined))
+      }
+      ErrorHandler.globalError(err, !!cached)
     }
   }
 
@@ -115,6 +118,10 @@ export default class LendingStore extends ChildStore<IRootStore>
     this.lending = undefined
     this.query = {
       page: 1,
+      user: "",
+      status: "",
+      created__gte: undefined,
+      created__lte: undefined,
     }
     this.page = {
       count: 0,
@@ -125,10 +132,21 @@ export default class LendingStore extends ChildStore<IRootStore>
   }
 
   private getLendingFromList(id: number) {
-    const lending = this.lendings.find(b => b.id === Number(id))
+    const lending = toJS(this.lendings.find(b => b.id === Number(id)))
     if (lending) {
       runInAction(() => (this.lending = lending))
+      Cache.save("lending:view", id, lending)
     }
     return lending
+  }
+
+  @action.bound
+  private updateList(data: IListResponse<ILending>) {
+    this.lendings = data.results
+    this.page = {
+      count: data.count,
+      last: Math.ceil(data.count / LendingStore.PAGE_SIZE) || 1,
+      current: this.query.page!,
+    }
   }
 }

@@ -7,6 +7,7 @@ import * as ExtractTextPlugin from "extract-text-webpack-plugin"
 import config from "./config"
 
 const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin")
+const SWPrecacheWebpackPlugin = require("sw-precache-webpack-plugin")
 const threadLoader = require("thread-loader")
 const autoprefixer = require("autoprefixer")()
 
@@ -126,14 +127,26 @@ export default function getBaseConfiguration(prod: boolean) {
     },
     plugins: [
       new HtmlWebpackPlugin({
-        template: "src/index.html",
-        inject: "body",
+        template: "src/index.ejs",
+        inject: false,
+      }),
+      new SWPrecacheWebpackPlugin({
+        minify: prod,
+        cacheId: "library",
+        filename: "service-worker.js",
+        navigateFallback: "/index.html",
+        navigateFallbackWhitelist: [/^(?!\/(api|admin|hot|static))/],
+        staticFileGlobs: ["/index.html", "src/public/**/**.*"],
+        stripPrefix: "src/public/",
+        mergeStaticsConfig: true,
+        staticFileGlobsIgnorePatterns: [/\.map$/, /hot-update\./],
       }),
       new CopyWebpackPlugin([{ from: "src/public" }]),
       new webpack.NoEmitOnErrorsPlugin(),
       new ForkTsCheckerWebpackPlugin({ checkSyntacticErrors: true }),
       new webpack.DefinePlugin({
         "process.env": {
+          DEBUG: !prod,
           NODE_ENV: JSON.stringify(process.env.NODE_ENV || "development"),
           ADMIN_EMAIL: JSON.stringify(process.env.FRONTEND_ADMIN_EMAIL),
           RECAPTCHA_SITE_KEY: JSON.stringify(process.env.RECAPTCHA_SITE_KEY),
@@ -149,6 +162,17 @@ export default function getBaseConfiguration(prod: boolean) {
         allChunks: true,
       })
     )
+    ;(conf.module as webpack.NewModule).rules!.push(
+      {
+        test: /redbox-react|mobx-react-devtools/,
+        use: 'null-loader'
+      })
+  }
+  if (isWatch) {
+    conf.watchOptions = {
+      aggregateTimeout: 300,
+      poll: 1000,
+    }
   }
 
   return conf

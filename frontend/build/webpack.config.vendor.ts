@@ -13,9 +13,12 @@ const vendorConf: webpack.Configuration = {
     library: "vendor_lib",
   },
   plugins: [
-    new CleanWebpackPlugin([`${config.outputDev}/${config.assets}/vendor[.-]*`], {
-      root: path.resolve("."),
-    }),
+    new CleanWebpackPlugin(
+      [`${config.outputDev}/${config.assets}/vendor[.-]*`],
+      {
+        root: path.resolve("."),
+      }
+    ),
     new webpack.DllPlugin({
       context: path.resolve("."),
       path: `${config.outputDev}/${config.assets}/vendor-manifest.json`,

@@ -3,7 +3,6 @@ import { Route, Router, Switch, Redirect } from "react-router-dom"
 import { observer } from "mobx-react"
 import DevTools from "mobx-react-devtools"
 
-import config from "config"
 import history from "utils/history"
 import MenuBar from "components/MenuBar"
 import Landing from "components/Landing"
@@ -91,7 +90,7 @@ export default class App extends Component<{}, {}> {
               </div>
             </div>
           </div>
-          {config.debug && <DevTools />}
+          {process.env.DEBUG && <DevTools />}
         </section>
       </Router>
     )

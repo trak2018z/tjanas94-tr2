@@ -1,8 +1,9 @@
 import ChildStore from "stores/ChildStore"
-import { runInAction, observable, action } from "mobx"
+import { toJS, runInAction, observable, action } from "mobx"
 import qs from "qs"
 import history from "utils/history"
 import request from "utils/request"
+import Cache from "utils/Cache"
 import ErrorHandler from "utils/ErrorHandler"
 import BookSearchStore from "./BookSearchStore"
 import BookEditStore from "./BookEditStore"
@@ -21,20 +22,20 @@ export default class BookStore extends ChildStore<IRootStore>
   public bookEditForm: IBookEditStore = new BookEditStore(this.rootStore, this)
 
   public fetchBooks = async (query: IBookQuery = this.query) => {
+    const cached = (await Cache.get("book:list", query)) as
+      | IListResponse<IBook>
+      | undefined
     try {
       runInAction(() => (this.query = query))
       const reqData = qs.stringify(this.query)
       const response = await request.get("books?" + reqData)
-      runInAction(() => {
-        this.books = response.data.results
-        this.page = {
-          count: response.data.count,
-          last: Math.ceil(response.data.count / BookStore.PAGE_SIZE) || 1,
-          current: this.query.page,
-        }
-      })
+      Cache.save("book:list", query, response.data)
+      this.updateList(response.data)
     } catch (err) {
-      ErrorHandler.globalError(err)
+      if (cached) {
+        this.updateList(cached)
+      }
+      ErrorHandler.globalError(err, !!cached)
     }
   }
 
@@ -70,20 +71,17 @@ export default class BookStore extends ChildStore<IRootStore>
   }
 
   public changePage = (page: number) => async () => {
-    try {
-      if (page < 1 || page > this.page.last) {
-        return
-      }
-      runInAction(() => (this.query.page = this.page.current = page))
-      await this.fetchBooks()
-    } catch (err) {
-      ErrorHandler.globalError(err)
+    if (page < 1 || page > this.page.last) {
+      return
     }
+    runInAction(() => (this.query.page = this.page.current = page))
+    await this.fetchBooks()
   }
 
   public getBook = async (id: number) => {
+    const cached = (await Cache.get("book:view", id)) as IBook | undefined
     try {
-      if(this.getBookFromList(id)) {
+      if (this.getBookFromList(id)) {
         return
       }
       const response = await request.get("books/" + id)
@@ -92,11 +90,16 @@ export default class BookStore extends ChildStore<IRootStore>
           response.data[key] = ""
         }
       }
+      Cache.save("book:view", id, response.data)
       runInAction(() => (this.book = response.data))
     } catch (err) {
-      history.push("/books")
-      runInAction(() => (this.book = undefined))
-      ErrorHandler.globalError(err)
+      if (cached) {
+        runInAction(() => (this.book = cached))
+      } else {
+        history.push("/books")
+        runInAction(() => (this.book = undefined))
+      }
+      ErrorHandler.globalError(err, !!cached)
     }
   }
 
@@ -105,6 +108,11 @@ export default class BookStore extends ChildStore<IRootStore>
     this.books = []
     this.book = undefined
     this.query = {
+      title: "",
+      author: "",
+      publication_year__gte: "",
+      publication_year__lte: "",
+      available: "",
       page: 1,
     }
     this.page = {
@@ -116,10 +124,21 @@ export default class BookStore extends ChildStore<IRootStore>
   }
 
   private getBookFromList(id: number) {
-    const book = this.books.find(b => b.id === Number(id))
+    const book = toJS(this.books.find(b => b.id === Number(id)))
     if (book) {
       runInAction(() => (this.book = book))
+      Cache.save("book:view", id, book)
     }
     return book
+  }
+
+  @action.bound
+  private updateList(data: IListResponse<IBook>) {
+    this.books = data.results
+    this.page = {
+      count: data.count,
+      last: Math.ceil(data.count / BookStore.PAGE_SIZE) || 1,
+      current: this.query.page,
+    }
   }
 }

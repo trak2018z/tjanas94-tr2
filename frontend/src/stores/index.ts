@@ -1,8 +1,7 @@
 import RootStore from "stores/RootStore"
-import config from "config"
 
 const store = new RootStore().getStoreMap()
-if (config.debug) {
+if (process.env.DEBUG) {
   window.store = store
 }
 

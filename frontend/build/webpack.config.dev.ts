@@ -14,45 +14,24 @@ const baseConf = getBaseConfiguration(false)
 const devConf: webpack.Configuration = {
   ...baseConf,
   entry: {
-    app: "./src/index.tsx",
+    app: [
+      "webpack-hot-middleware/client?path=/__webpack_hmr&timeout=20000",
+      "./src/index.tsx",
+    ],
   },
   output: {
     path: path.resolve(config.outputDev),
     filename: config.assets + "/[name].[hash].js",
+    hotUpdateChunkFilename: "hot/hot-update.js",
+    hotUpdateMainFilename: "hot/hot-update.json",
   },
   devtool: config.sourceMapDev as any,
-  devServer: {
-    contentBase: path.resolve(config.outputDev),
-    compress: true,
-    host: "0.0.0.0",
-    port: 9000,
-    historyApiFallback: true,
-    hot: true,
-    disableHostCheck: true,
-    stats: {
-      assets: false,
-      children: false,
-      chunks: false,
-      hash: false,
-      modules: false,
-      publicPath: false,
-      version: false,
-    },
-    watchOptions: {
-      aggregateTimeout: 300,
-      poll: 1000,
-    },
-    proxy: {
-      "/api": "http://backend:8000",
-      "/admin": "http://backend:8000",
-      "/static": "http://backend:8000",
-    },
-  },
   plugins: [
     ...baseConf.plugins!,
     new CleanWebpackPlugin([`${config.outputDev}/${config.assets}/app.*`], {
       root: path.resolve("."),
     }),
+    new webpack.WatchIgnorePlugin([path.resolve("dist")]),
     new AddAssetHtmlWebpackPlugin([
       {
         filepath: `${config.outputDev}/${config.assets}/vendor.*.js`,

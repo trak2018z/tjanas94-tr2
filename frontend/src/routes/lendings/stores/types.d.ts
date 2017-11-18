@@ -23,16 +23,16 @@ interface ILending {
   book: ILendingBook
 }
 interface ILendingQuery {
-  status?: string
-  user?: string
-  created__gte?: string
-  created__lte?: string
+  status: string
+  user: string
+  created__gte: string
+  created__lte: string
   page?: number
 }
 
 interface ILendingRequest {
-  status?: string
-  user?: string
+  status: string
+  user: string
   created__gte?: number
   created__lte?: number
   page?: number

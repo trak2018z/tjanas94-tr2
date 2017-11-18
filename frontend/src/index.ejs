@@ -1,0 +1,66 @@
+<!DOCTYPE>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Biblioteka</title>
+  <base href="/">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="theme-color" content="#ffffff">
+  <% for (key in htmlWebpackPlugin.files.css) { %>
+    <link href="<%= htmlWebpackPlugin.files.css[key] %>" rel="preload" as="style" integrity="<%= htmlWebpackPlugin.files.cssIntegrity[key] %>"
+      crossorigin="anonymous">
+  <% } %>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="preload" as="style" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0="
+    crossorigin="anonymous">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="preload" as="style">
+  <style>
+    html, body {
+      margin: 0;
+      height: 100%;
+      font-family: Arial, sans-serif;
+      background: #3273dc;
+      color: #fff;
+    }
+    a {
+      color: #fff;
+      text-decoration: none;
+    }
+    #preloader {
+      display: -webkit-box;
+      display: -moz-box;
+      display: -ms-flexbox;
+      display: -webkit-flex;
+      display: flex;
+      height: 100%;
+      padding: 0;
+      margin: 0;
+      align-items: center;
+      justify-content: center;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    <h1 id="preloader">Trwa ładowanie aplikacji</h1>
+  </div>
+  <% for (key in htmlWebpackPlugin.files.js) { %>
+    <% if (htmlWebpackPlugin.files.jsIntegrity) { %>
+      <script src="<%= htmlWebpackPlugin.files.js[key] %>" type="text/javascript" integrity="<%= htmlWebpackPlugin.files.jsIntegrity[key] %>"
+        crossorigin="anonymous"></script>
+    <% } else { %>
+      <script src="<%= htmlWebpackPlugin.files.js[key] %>" type="text/javascript"></script>
+    <% } %>
+  <% } %>
+  <script type="text/javascript" src="https://www.google.com/recaptcha/api.js?onload=onLoadRecaptcha&render=explicit" async
+    defer></script>
+</body>
+
+</html>
