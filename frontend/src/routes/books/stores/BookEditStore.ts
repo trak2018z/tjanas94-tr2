@@ -35,7 +35,19 @@ export default class BookEditStore extends FormStore<IBookStore, IBook>
     }
     await this.parentStore.getBook(id)
     if (this.parentStore.book) {
-      runInAction(() => (this.data = toJS(this.parentStore.book!)))
+      runInAction(() => (this.data = this.copyData(toJS(this.parentStore.book!))))
+    }
+  }
+
+  private copyData(data: IBook) {
+    return {
+      id: data.id,
+      title: data.title || "",
+      author: data.author || "",
+      publication_yeay: data.publication_year || "",
+      publication_place: data.publication_place || "",
+      publishing_house: data.publishing_house || "",
+      count: data.count || 0,
     }
   }
 }

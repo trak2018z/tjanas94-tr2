@@ -92,6 +92,9 @@ export default class LendingStore extends ChildStore<IRootStore>
 
   public getLending = async (id: number) => {
     try {
+      if(this.getLendingFromList(id)) {
+        return
+      }
       const response = await request.get("lendings/" + id)
       for (const [key, value] of Object.entries(response.data)) {
         if (value == null) {
@@ -119,5 +122,13 @@ export default class LendingStore extends ChildStore<IRootStore>
       current: 1,
     }
     this.clearChildStores()
+  }
+
+  private getLendingFromList(id: number) {
+    const lending = this.lendings.find(b => b.id === Number(id))
+    if (lending) {
+      runInAction(() => (this.lending = lending))
+    }
+    return lending
   }
 }

@@ -14,7 +14,7 @@ export default class BookSearchStore extends FormStore<IBookStore, IBookQuery>
 
   @action.bound
   public clear() {
-    this.data = this.copyQuery(this.parentStore.query)
+    this.data = this.copyQuery(toJS(this.parentStore.query))
     this.error = {
       message: "",
       visible: false,

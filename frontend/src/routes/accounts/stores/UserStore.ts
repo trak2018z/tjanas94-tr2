@@ -12,10 +12,22 @@ import ErrorHandler from "utils/ErrorHandler"
 export default class UserStore extends ChildStore<IRootStore>
   implements IUserStore {
   public loginForm: ILoginFormStore = new LoginFormStore(this.rootStore, this)
-  public registerForm: IRegisterFormStore = new RegisterFormStore(this.rootStore, this)
-  public profileForm: IProfileFormStore = new ProfileFormStore(this.rootStore, this)
-  public resetPasswordStep1Form: IResetPasswordStep1Store = new ResetPasswordStep1Store(this.rootStore, this)
-  public resetPasswordStep2Form: IResetPasswordStep2Store = new ResetPasswordStep2Store(this.rootStore, this)
+  public registerForm: IRegisterFormStore = new RegisterFormStore(
+    this.rootStore,
+    this
+  )
+  public profileForm: IProfileFormStore = new ProfileFormStore(
+    this.rootStore,
+    this
+  )
+  public resetPasswordStep1Form: IResetPasswordStep1Store = new ResetPasswordStep1Store(
+    this.rootStore,
+    this
+  )
+  public resetPasswordStep2Form: IResetPasswordStep2Store = new ResetPasswordStep2Store(
+    this.rootStore,
+    this
+  )
   @observable public user: IUser
 
   constructor(rootStore: IRootStore, parentStore: IRootStore) {
@@ -73,14 +85,14 @@ export default class UserStore extends ChildStore<IRootStore>
 
   public logout = async () => {
     try {
-      await request.post("accounts/logout")
       this.setUser(this.getDefaultUser())
       this.cacheUser()
       this.rootStore.clear()
       this.rootStore.messageStore.showMessage("Wylogowano pomyślnie")
       history.push("/")
+      await request.post("accounts/logout")
     } catch (err) {
-      ErrorHandler.globalError(err)
+      ErrorHandler.globalError(err, true)
     }
   }
 
@@ -103,12 +115,15 @@ export default class UserStore extends ChildStore<IRootStore>
     try {
       const response = await request.get("accounts/profile")
       if (response.data.user) {
-        this.setUser(this.getLoggedUser(response.data.user))
-      } else {
-        this.setUser(this.getDefaultUser())
+        if (this.user.authenticated) {
+          return this.setUser(this.getLoggedUser(response.data.user))
+        }
+        await request.post("accounts/logout")
       }
+
+      return this.setUser(this.getDefaultUser())
     } catch (err) {
-      ErrorHandler.globalError(err)
+      ErrorHandler.globalError(err, true)
     }
   }
 

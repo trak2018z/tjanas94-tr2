@@ -13,7 +13,7 @@ export default class LendingSearchStore extends FormStore<
 
   @action.bound
   public clear() {
-    this.data = this.convertFromRequest(this.parentStore.query)
+    this.data = this.convertFromRequest(toJS(this.parentStore.query))
     this.error = {
       message: "",
       visible: false,

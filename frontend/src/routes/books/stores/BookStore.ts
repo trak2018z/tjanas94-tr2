@@ -83,6 +83,9 @@ export default class BookStore extends ChildStore<IRootStore>
 
   public getBook = async (id: number) => {
     try {
+      if(this.getBookFromList(id)) {
+        return
+      }
       const response = await request.get("books/" + id)
       for (const [key, value] of Object.entries(response.data)) {
         if (value == null) {
@@ -110,5 +113,13 @@ export default class BookStore extends ChildStore<IRootStore>
       current: 1,
     }
     this.clearChildStores()
+  }
+
+  private getBookFromList(id: number) {
+    const book = this.books.find(b => b.id === Number(id))
+    if (book) {
+      runInAction(() => (this.book = book))
+    }
+    return book
   }
 }
