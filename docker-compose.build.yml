@@ -20,6 +20,19 @@ services:
         - tjanas94/library-frontend-builder
     image: tjanas94/library-frontend-builder
 
+  confd:
+    build:
+      context: .
+      dockerfile: docker/nginx/Dockerfile.rpi
+      target: confd
+      args:
+        - FRONTEND_ADMIN_EMAIL=${FRONTEND_ADMIN_EMAIL}
+        - RECAPTCHA_SITE_KEY=${RECAPTCHA_SITE_KEY}
+      cache_from:
+        - tjanas94/library-frontend-builder
+        - tjanas94/library-frontend-confd
+    image: tjanas94/library-frontend-confd
+
   frontend:
     build:
       context: .
@@ -27,8 +40,8 @@ services:
       args:
         - FRONTEND_ADMIN_EMAIL=${FRONTEND_ADMIN_EMAIL}
         - RECAPTCHA_SITE_KEY=${RECAPTCHA_SITE_KEY}
-        - FRONTEND_SSL_PORT=${FRONTEND_SSL_PORT}
       cache_from:
         - tjanas94/library-frontend-builder
+        - tjanas94/library-frontend-confd
         - tjanas94/library-frontend
     image: tjanas94/library-frontend
