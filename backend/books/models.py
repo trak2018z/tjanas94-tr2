@@ -29,12 +29,16 @@ class Book(models.Model):
 
 
 class Lending(models.Model):
-    book = models.ForeignKey(Book, verbose_name='książka')
+    book = models.ForeignKey(
+        Book,
+        verbose_name='książka',
+        on_delete=models.CASCADE, )
     last_change = models.ForeignKey(
         'LendingHistory',
         verbose_name='ostatnia zmiana',
         related_name='+',
-        null=True)
+        null=True,
+        on_delete=models.CASCADE, )
 
     class Meta:
         permissions = (
@@ -57,9 +61,15 @@ class LendingHistory(models.Model):
     STATUSES_MAP = {k: v for k, v in STATUSES}
 
     status = models.PositiveSmallIntegerField('status', choices=STATUSES)
-    user = models.ForeignKey(User, verbose_name='użytkownik')
+    user = models.ForeignKey(
+        User,
+        verbose_name='użytkownik',
+        on_delete=models.CASCADE, )
     lending = models.ForeignKey(
-        Lending, verbose_name='wypożyczenie', related_name='history')
+        Lending,
+        verbose_name='wypożyczenie',
+        related_name='history',
+        on_delete=models.CASCADE, )
     created = models.DateTimeField('utworzone', default=timezone.now)
 
 

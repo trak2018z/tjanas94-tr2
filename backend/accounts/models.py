@@ -70,7 +70,8 @@ class User(AbstractBaseUser):
         verbose_name='grupa',
         null=True,
         blank=True,
-        help_text='Grupa do której należy użytkownik.', )
+        help_text='Grupa do której należy użytkownik.',
+        on_delete=models.CASCADE, )
     date_joined = models.DateTimeField(_('date joined'), default=timezone.now)
     activation_date = models.DateTimeField(
         'data aktywacji', null=True, blank=True)
