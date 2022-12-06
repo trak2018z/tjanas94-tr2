@@ -58,7 +58,7 @@
     "mobx-react-devtools": "~4.2.15",
     "moment": "~2.19.2",
     "object-hash": "~1.2.0",
-    "qs": "~6.5.1",
+    "qs": "~6.5.3",
     "react": "^16.1.1",
     "react-dom": "^16.1.1",
     "react-router-dom": "~4.2.2",
